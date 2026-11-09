@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Pinjaman & Zakat</title>
+<style>
+  body { font-family: system-ui, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; padding:20px; }
+  h1 { text-align:center; }
+  .tabs { display:flex; gap:8px; justify-content:center; margin-bottom:20px; }
+  .tab { background:#1e293b; color:#e2e8f0; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; }
+  .tab.active { background:#f97316; }
+  .card { background:#1e293b; padding:20px; border-radius:12px; max-width:420px; margin:auto; }
+  label { display:block; margin-top:10px; color:#94a3b8; }
+  input { width:100%; padding:8px; border-radius:8px; border:none; margin-top:4px; }
+  button.calc { margin-top:16px; width:100%; background:#22c55e; color:#fff; border:none; padding:10px; border-radius:8px; cursor:pointer; font-size:16px; }
+  .result { margin-top:16px; font-size:18px; font-weight:bold; color:#facc15; }
+  .hidden { display:none; }
+  footer { text-align:center; margin-top:30px; color:#64748b; font-size:12px; }
+</style>
+</head>
+<body>
+<h1>🧮 Kalkulator Pinjaman & Zakat</h1>
+<div class="tabs">
+  <button class="tab active" onclick="show('loan')">Pinjaman</button>
+  <button class="tab" onclick="show('zakat')">Zakat</button>
+</div>
+
+<div id="loan" class="card">
+  <label>Jumlah Pinjaman (RM)</label>
+  <input id="l_amt" type="number" value="10000">
+  <label>Kadar Faedah (% setahun)</label>
+  <input id="l_rate" type="number" value="5" step="0.1">
+  <label>Tempoh (tahun)</label>
+  <input id="l_years" type="number" value="5">
+  <button class="calc" onclick="calcLoan()">Kira</button>
+  <div class="result" id="l_res"></div>
+</div>
+
+<div id="zakat" class="card hidden">
+  <label>Pendapatan Bulanan (RM)</label>
+  <input id="z_inc" type="number" value="5000">
+  <label>Nisab (RM) — default 2024</label>
+  <input id="z_nisab" type="number" value="30686">
+  <button class="calc" onclick="calcZakat()">Kira</button>
+  <div class="result" id="z_res"></div>
+</div>
+
+<footer>Share link ni kalau membantu 🙏</footer>
+
+<script>
+function show(t){
+  document.getElementById('loan').classList.toggle('hidden', t!=='loan');
+  document.getElementById('zakat').classList.toggle('hidden', t!=='zakat');
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='loan')||(i===1&&t==='zakat')));
+}
+function calcLoan(){
+  const P=+document.getElementById('l_amt').value;
+  const r=+document.getElementById('l_rate').value/100/12;
+  const n=+document.getElementById('l_years').value*12;
+  const m=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+  const total=m*n;
+  document.getElementById('l_res').innerHTML = 'Bayaran bulanan: RM '+m.toFixed(2)+'<br>Jumlah bayar: RM '+total.toFixed(2)+'<br>Faedah: RM '+(total-P).toFixed(2);
+}
+function calcZakat(){
+  const inc=+document.getElementById('z_inc').value*12;
+  const nisab=+document.getElementById('z_nisab').value;
+  if(inc<nisab){ document.getElementById('z_res').innerHTML='Pendapatan tahunan kurang nisab. Tiada zakat pendapatan.'; return; }
+  const zakat=inc*0.025;
+  document.getElementById('z_res').innerHTML='Zakat pendapatan (2.5%): RM '+zakat.toFixed(2);
+}
+</script>
+</body>
+</html>
