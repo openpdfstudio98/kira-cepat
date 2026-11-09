@@ -146,8 +146,7 @@ function calcConv(){
     if(f==='C') c=v; else if(f==='F') c=(v-32)*5/9; else c=v-273.15;
     if(to==='C') res=c; else if(to==='F') res=c*9/5+32; else res=c+273.15;
   } else if(t==='cur'){
-    const base=v/units.cur[f];
-    res=base*units.cur[to];
+    res=v*units.cur[f]/units.cur[to];
   } else {
     res=v*units[t][f]/units[t][to];
   }
