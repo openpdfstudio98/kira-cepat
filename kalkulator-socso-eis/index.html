@@ -211,9 +211,11 @@ async function loadRates(){
     }
   } catch(e){ /* keep static fallback */ }
 }
-loadRates();
-convUpdate();
+convUpdate(); // V4.5 converter manages validated fresh rates.
 </script>
+<script src="../calc-core-v45.js" defer></script>
+<script src="../legacy-v45.js" defer></script>
+<script src="../converter-v45.js" defer></script>
 <script src="../ultimate-v2.js" defer></script>
 <script src="../premium-v3-1.js" defer></script>
 <script>window.addEventListener('DOMContentLoaded',function(){if(!location.hash){document.querySelector('.tabs .tab[data-target="socso"]')?.click();}});</script>
