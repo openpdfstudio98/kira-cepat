@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kira Cepat - Kalkulator & Converter</title>
-<meta name="description" content="Kalkulator pinjaman, zakat pendapatan, dan converter unit/mata wang Malaysia. Kira percuma.">
+<title>Kira Cepat Ultimate V2 | Kalkulator Gaji, OT, Zakat & Simpanan</title>
+<meta name="description" content="Kalkulator percuma Malaysia: gaji bersih, overtime, KWSP, SOCSO, EIS, cukai pendapatan, simpanan, pinjaman, zakat dan penukar unit.">
 <meta name="keywords" content="kalkulator pinjaman, kalkulator zakat, converter unit, tukar mata wang, kira cepat">
 <meta name="google-site-verification" content="pieDBnFFz28b63XIJsjt40zBqPQe-7-5JrKocVMDOaI" />
 <meta property="og:title" content="Kira Cepat">
@@ -33,12 +33,22 @@
   .row { display:flex; gap:8px; }
   .row > * { flex:1; }
   footer { text-align:center; margin-top:30px; color:#64748b; font-size:12px; }
+
+  .wrap { max-width:760px; }
+  .tabs { gap:7px; }
+  .tab { min-width:90px; flex:1 1 100px; min-height:42px; }
+  .card h2 {font-size:18px; margin:0 0 10px; color:#f8fafc;}
+  .v2-note {font-size:12px; line-height:1.65; color:#aebbd0; margin:16px 0 0;}
+  .v2-note a {color:#93c5fd;}
+  .error {color:#fca5a5;}
+  .result strong {color:#fde68a;}
+  @media(max-width:480px){body{padding:22px 12px}.card{padding:18px}.tabs{gap:5px}.tab{min-width:81px;font-size:12px;padding:10px 5px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>Kira Cepat</h1>
-<p class="sub">Kalkulator & converter percuma</p>
+<p class="sub">Kalkulator Malaysia & converter percuma • Ultimate V2</p>
 <div class="tabs">
   <button class="tab active" onclick="show('loan')">Pinjaman</button>
   <button class="tab" onclick="show('zakat')">Zakat</button>
@@ -113,14 +123,15 @@ function calcLoan(){
   const P=+document.getElementById('l_amt').value;
   const r=+document.getElementById('l_rate').value/100/12;
   const n=+document.getElementById('l_years').value*12;
-  if(!P||!r||!n){ document.getElementById('l_res').innerHTML='Sila isi semua nilai.'; return; }
-  const m=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+  if(!Number.isFinite(P)||!Number.isFinite(r)||!Number.isFinite(n)||P<=0||r<0||n<=0){ document.getElementById('l_res').textContent='Sila isi jumlah dan tempoh positif, serta kadar faedah tidak negatif.'; return; }
+  const m = r===0 ? P/n : P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
   const total=m*n;
   document.getElementById('l_res').innerHTML = 'Bayaran bulanan: <b>RM '+m.toFixed(2)+'</b><br>Jumlah bayar: RM '+total.toFixed(2)+'<br>Total faedah: RM '+(total-P).toFixed(2);
 }
 function calcZakat(){
   const inc=+document.getElementById('z_inc').value*12;
   const nisab=+document.getElementById('z_nisab').value;
+  if(!Number.isFinite(inc)||!Number.isFinite(nisab)||inc<0||nisab<0){ document.getElementById('z_res').textContent='Sila isi nilai pendapatan dan nisab yang sah.'; return; }
   if(inc<nisab){ document.getElementById('z_res').innerHTML='Pendapatan tahunan kurang nisab. Tiada zakat pendapatan.'; return; }
   const zakat=inc*0.025;
   document.getElementById('z_res').innerHTML='Zakat pendapatan (2.5%): <b>RM '+zakat.toFixed(2)+'</b>';
@@ -143,6 +154,7 @@ function calcConv(){
   const f=document.getElementById('c_from').value;
   const to=document.getElementById('c_to').value;
   let res;
+  if(!Number.isFinite(v)||v<0){ document.getElementById('c_res').textContent='Sila masukkan nilai yang sah dan tidak negatif.'; return; }
   if(t==='tmp'){
     let c;
     if(f==='C') c=v; else if(f==='F') c=(v-32)*5/9; else c=v-273.15;
@@ -169,5 +181,6 @@ async function loadRates(){
 loadRates();
 convUpdate();
 </script>
+<script src="ultimate-v2.js" defer></script>
 </body>
 </html>
