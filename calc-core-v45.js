@@ -47,31 +47,29 @@
   if(!map||!Object.hasOwn(map,from)||!Object.hasOwn(map,to))throw Error('Unit tidak sah.');
   return v*map[from]/map[to];
  }
- function epfPartA(wage){
-  const w=nonnegative(wage,'Gaji KWSP');
-  if(w===0)return {employee:0,employer:0,method:'schedule approximation'};
-  if(w<=10)return {employee:0,employer:0,method:'low-wage estimate; verify schedule'};
-  if(w>20000){
-   const employee=Math.round(w*.11*100)/100;
-   const total=Math.ceil(w*(.11+.12)-1e-9);
-   return {employee,employer:Math.round((total-employee)*100)/100,method:'statutory rate with total rounding'};
-  }
-  const upper=w<=5000?Math.ceil((w-1e-9)/20)*20:Math.ceil((w-5000-1e-9)/100)*100+5000;
-  return {employee:Math.ceil(upper*.11-1e-9),employer:Math.ceil(upper*(w<=5000?.13:.12)-1e-9),method:'approximate Part A band'};
- }
- function approxContributions(wage){
-  const w=nonnegative(wage,'Gaji'), epf=epfPartA(w), capped=Math.min(w,6000);
-  const round2=n=>Math.round(n*100)/100;
+ const tables=(typeof module==='object'&&module.exports&&typeof require==='function')?require('./contribution-tables-v46.js'):globalThis.KiraContributionTables;
+ if(!tables)throw Error('Jadual caruman V4.6 tidak dimuat.');
+ function epfPartA(wage){const w=nonnegative(wage,'Gaji KWSP');return tables.kwsp(w);}
+ function approxContributions(wage,{skbbk=false}={}){
+  const w=nonnegative(wage,'Gaji'),epf=epfPartA(w),soc=tables.perkeso(w,{skbbk});
   return {epf:epf.employee,employerEPF:epf.employer,epfMethod:epf.method,
-   socso:round2(capped*.005),eis:round2(capped*.002),employerSocso:round2(capped*.0175),
-   estimated:true};
+   socso:soc.socso,socsoInvalidity:soc.socsoInvalidity,skbbk:soc.skbbk,
+   eis:soc.eis,employerEis:soc.employerEis,employerSocso:soc.employerSocso,
+   source:'official-schedule',estimated:true,skbbkIncluded:skbbk};
  }
- function salary(base,allowance,ot,other){
-  const gross=nonnegative(base,'Gaji asas')+nonnegative(allowance,'Elaun')+nonnegative(ot,'Bayaran OT');
-  const c=approxContributions(gross),deduction=nonnegative(other,'Potongan lain');
-  const net=gross-c.epf-c.socso-c.eis-deduction;
+ function salary(base,allowance,ot,other,{skbbk=false}={}){
+  const basePay=nonnegative(base,'Gaji asas'),eligibleAllowance=nonnegative(allowance,'Elaun'),overtimePay=nonnegative(ot,'Bayaran OT');
+  const gross=basePay+eligibleAllowance+overtimePay;
+  // Under normal KWSP rules, overtime payments are not liable to EPF contributions.
+  const epfWage=basePay+eligibleAllowance;
+  const epf=epfPartA(epfWage);
+  const soc=tables.perkeso(gross,{skbbk});
+  const deduction=nonnegative(other,'Potongan lain'),net=gross-epf.employee-soc.socso-soc.eis-deduction;
   if(net<0)throw Error('Potongan melebihi gaji kasar. Semak nilai dimasukkan.');
-  return {gross,net,other:deduction,...c};
+  return {gross,net,other:deduction,epfWage,epf:epf.employee,employerEPF:epf.employer,
+   socso:soc.socso,socsoInvalidity:soc.socsoInvalidity,skbbk:soc.skbbk,eis:soc.eis,
+   employerEis:soc.employerEis,employerSocso:soc.employerSocso,
+   source:'official-schedule',estimated:true,skbbkIncluded:skbbk};
  }
  function overtime(pay,days,dayHours,otHours,multiplier){
   const hourly=nonnegative(pay,'Gaji asas')/positive(days,'Hari bekerja')/positive(dayHours,'Jam kerja sehari');
