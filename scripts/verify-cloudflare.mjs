@@ -22,7 +22,7 @@ for(const path of paths){
  if(!xml.includes('<loc>'+canonical+'</loc>'))throw Error('Sitemap missing '+canonical);
  if(html.includes('USD:4.7')||html.includes('EUR:5.1'))throw Error('Stale currency fallback remains in '+path);
  const prefix=path?'../':'';
- for(const asset of ['premium-v3.css','premium-v3-1.css','seo-v4.css','ultimate-v2.js','premium-v3-1.js','calc-core-v45.js','legacy-v45.js','converter-v45.js','favicon.png']){
+ for(const asset of ['premium-v3.css','premium-v3-1.css','seo-v4.css','ultimate-v2.js','premium-v3-1.js','calc-core-v45.js','legacy-v45.js','converter-v45.js','contribution-tables-v46.js','favicon.png']){
   if(!existsSync(join(dir,asset)))throw Error('Shared asset not in output: '+asset);
   if(!html.includes(prefix+asset))throw Error('HTML missing shared asset: '+path+asset);
  }
