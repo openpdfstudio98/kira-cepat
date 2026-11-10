@@ -56,7 +56,7 @@
   if(w>20000){
    const employee=Math.round(w*.11*100)/100;
    const employer=Math.round(w*.12*100)/100;
-   return {employee,employer,total:Math.ceil((employee+employer)-1e-9),method:'Part A > RM20,000 (total rounded)'};
+   return {employee,employer,total:Math.ceil(w*23/100),method:'Part A > RM20,000 (total rounded)'};
   }
   const upper=w<=5000?Math.ceil((w-1e-9)/20)*20:Math.ceil((w-5000-1e-9)/100)*100+5000;
   const employee=Math.ceil(upper*.11-1e-9),employer=Math.ceil(upper*(w<=5000?.13:.12)-1e-9);
@@ -86,15 +86,16 @@
   }
   return {socso,employerSocso,eis,employerEis:eis,source:'PERKESO Act 4 first category / Act 800 (Oct 2024)',estimated:false};
  }
- function approxContributions(wage){
-  const w=nonnegative(wage,'Gaji'),epf=epfPartA(w),p=perkesoFirstCategory(w);
+ function approxContributions(wage,epfWage=wage){
+  const epf=epfPartA(epfWage),p=perkesoFirstCategory(wage);
   return {epf:epf.employee,employerEPF:epf.employer,epfTotal:epf.total,epfMethod:epf.method,
    socso:p.socso,eis:p.eis,employerSocso:p.employerSocso,employerEis:p.employerEis,
    estimated:false,source:p.source};
  }
  function salary(base,allowance,ot,other){
-  const gross=nonnegative(base,'Gaji asas')+nonnegative(allowance,'Elaun')+nonnegative(ot,'Bayaran OT');
-  const c=approxContributions(gross),deduction=nonnegative(other,'Potongan lain');
+  const epfWage=nonnegative(base,'Gaji asas')+nonnegative(allowance,'Elaun');
+  const gross=epfWage+nonnegative(ot,'Bayaran OT');
+  const c=approxContributions(gross,epfWage),deduction=nonnegative(other,'Potongan lain');
   const net=gross-c.epf-c.socso-c.eis-deduction;
   if(net<0)throw Error('Potongan melebihi gaji kasar. Semak nilai dimasukkan.');
   return {gross,net,other:deduction,...c};

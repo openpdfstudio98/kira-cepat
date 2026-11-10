@@ -12,36 +12,36 @@
   const heading=document.querySelector('.workspace-heading');
   const reduceMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior=reduceMotion?'instant':'smooth';
+  function hashId(){
+    try{return decodeURIComponent(window.location.hash.slice(1));}
+    catch{return '';}
+  }
   const getTabId=tab=>tab.dataset.target||({0:'loan',1:'zakat',2:'conv'})[tabs.indexOf(tab)];
-  function select(id,focus=false){
+  function select(id){
     const tab=tabs.find(t=>getTabId(t)===id);
     if(!tab)return;
     tab.click();
-    tabs.forEach(t=>t.setAttribute('aria-current',t===tab?'true':'false'));
-    if(window.location.hash!=='#'+id)history.replaceState(null,'','#'+id);
-    if(focus)tab.focus({preventScroll:true});
-    tab.scrollIntoView({block:'nearest',inline:'nearest',behavior:scrollBehavior});
   }
   // Preserve legacy calculator handlers, add deep links and keep mobile navigation visible.
   tabs.forEach(tab=>{
     const id=getTabId(tab);
     if(!id)return;
     tab.setAttribute('aria-label','Buka kalkulator '+names[id]);
-    tab.addEventListener('click',()=>{
+    tab.setAttribute('aria-controls',id);
+    tab.addEventListener('click',event=>{
       tabs.forEach(t=>t.setAttribute('aria-current',t===tab?'true':'false'));
-      if(window.location.hash!=='#'+id)history.replaceState(null,'','#'+id);
-      if(window.matchMedia('(max-width:690px)').matches && heading){
+      if(event.isTrusted && window.location.hash!=='#'+id)history.replaceState(null,'','#'+id);
+      if(event.isTrusted && window.matchMedia('(max-width:690px)').matches && heading){
         heading.scrollIntoView({behavior:scrollBehavior,block:'start'});
       }
     });
   });
-  const current=decodeURIComponent(window.location.hash.slice(1));
-  if(ids.includes(current))select(current);
-  else tabs[0]?.setAttribute('aria-current','true');
-  window.addEventListener('hashchange',()=>{
-    const id=decodeURIComponent(window.location.hash.slice(1));
-    if(ids.includes(id))select(id);
-  });
+  function selectFromUrl(){
+    const id=hashId();
+    select(ids.includes(id)?id:document.body.dataset.defaultCalculator||'loan');
+  }
+  selectFromUrl();
+  window.addEventListener('hashchange',selectFromUrl);
   // Standard accessible result utilities for all nine calculator cards.
   ids.forEach(id=>{
     const card=document.getElementById(id);
@@ -61,8 +61,7 @@
     share.setAttribute('aria-label','Kongsi keputusan kalkulator '+names[id]);
     const status=document.createElement('span');status.className='v31-action-status';status.setAttribute('role','status');
     share.addEventListener('click',async()=>{
-      const data=result.innerText.trim();
-      if(!data||data.startsWith('Isi nilai')||data.startsWith('Masukkan nilai')||result.querySelector('.error')){
+      if(result.dataset.resultReady!=='true'){
         status.textContent='Masukkan nilai yang sah dahulu.';return;
       }
       try{
@@ -73,6 +72,16 @@
         status.textContent=e.name==='AbortError'?'Perkongsian dibatalkan.':'Tidak dapat berkongsi dalam pelayar ini.';
       }
     });
+    if(id==='loan'||id==='zakat'){
+      const invalidate=()=>{
+        result.dataset.resultReady='false';
+        result.textContent='Isi nilai dan tekan Kira.';
+      };
+      card.addEventListener('input',invalidate);
+    }
+    for(const event of ['input','change']){
+      card.addEventListener(event,()=>{status.textContent='';});
+    }
     actions.appendChild(share);actions.appendChild(status);
     result.insertAdjacentElement('afterend',actions);
     // Attach labels to older calculator inputs without altering their IDs or formulas.

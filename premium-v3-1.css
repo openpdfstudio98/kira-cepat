@@ -13,3 +13,16 @@
  .v31-actions .v2-copy,.v31-actions .v31-share{flex:initial;width:100%;min-height:46px}
 }
 @media(prefers-reduced-motion:reduce){.v31-actions button{transform:none!important}}
+
+/* Ultimate V5: keep every calculator visible at mobile widths. */
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;margin-top:8px}
+.footer-links a{display:inline-flex;align-items:center;min-height:44px;color:#c8b6ff;text-underline-offset:4px}
+@media(max-width:690px){
+ .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
+ .tabs .tab{width:100%;min-width:0;min-height:52px;gap:5px;padding:7px 4px;white-space:normal;text-align:center;overflow-wrap:anywhere;font-size:12px}
+ .tabs .tab-icon{width:21px;height:21px;font-size:10px}
+ .card input,.card select{font-size:16px}
+}
+@media(max-width:350px){
+ .tabs .tab{flex-direction:column}
+}
