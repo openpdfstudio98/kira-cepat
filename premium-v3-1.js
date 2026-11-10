@@ -9,6 +9,7 @@
   const ids=Object.keys(names);
   const resultIds={loan:'l_res',zakat:'z_res',conv:'c_res',currency:'fx_res',salary:'s_res',ot:'o_res',epf:'e_res',socso:'p_res',tax:'t_res',savings:'v_res'};
   const toolLinks=document.querySelectorAll('.tools-picker [data-tool]');
+  const toolUrls=new Map(Array.from(toolLinks,link=>[link.dataset.tool,link.href]));
   function selectFromUrl(){
     let hash;
     try{hash=decodeURIComponent(window.location.hash.slice(1));}catch{}
@@ -34,8 +35,9 @@
     if(copyButton)actions.appendChild(copyButton);
     const localized=text=>window.KiraLanguage?.translate(text)??text;
     const shareTitle=()=> 'Kira Cepat — '+localized(names[id]);
+    const url=toolUrls.get(id)||location.href;
     function payload(){
-      return shareTitle()+'\n'+result.innerText.trim()+'\n'+location.origin+location.pathname+'#'+id+'\n'+localized('Nota: Semak maklumat dan syarat pengiraan pada laman web.');
+      return shareTitle()+'\n'+result.innerText.trim()+'\n'+localized('Nota: Semak maklumat dan syarat pengiraan pada laman web.');
     }
     const share=document.createElement('button');
     share.type='button';share.className='v31-share';share.textContent='Kongsi keputusan';
@@ -46,8 +48,8 @@
         status.textContent='Masukkan nilai yang sah dahulu.';return;
       }
       try{
-        if(navigator.share){await navigator.share({title:shareTitle(),text:payload()});status.textContent='';}
-        else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(payload());status.textContent='Disalin. Boleh tampal ke WhatsApp atau aplikasi lain.';}
+        if(navigator.share){await navigator.share({title:shareTitle(),text:payload(),url});status.textContent='';}
+        else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(payload()+'\n\n'+url);status.textContent='Disalin. Boleh tampal ke WhatsApp atau aplikasi lain.';}
         else status.textContent='Perkongsian tidak disokong dalam pelayar ini.';
       }catch(e){
         status.textContent=e.name==='AbortError'?'Perkongsian dibatalkan.':'Tidak dapat berkongsi dalam pelayar ini.';
