@@ -8,25 +8,13 @@
   };
   const ids=Object.keys(names);
   const resultIds={loan:'l_res',zakat:'z_res',conv:'c_res',currency:'fx_res',salary:'s_res',ot:'o_res',epf:'e_res',socso:'p_res',tax:'t_res',savings:'v_res'};
-  const menu=document.querySelector('.tools-menu');
-  const trigger=menu?.querySelector('summary');
-  document.addEventListener('click',event=>{
-    if(menu?.open&&!menu.contains(event.target))menu.open=false;
-  });
-  menu?.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&menu.open){
-      menu.open=false;
-      trigger.focus();
-    }
-  });
-  const workspace=document.querySelector('.workspace');
-  if(!workspace)return;
+  const toolLinks=document.querySelectorAll('.tools-picker [data-tool]');
   function selectFromUrl(){
     let hash;
     try{hash=decodeURIComponent(window.location.hash.slice(1));}catch{}
     const selected=ids.includes(hash)?hash:document.body.dataset.defaultCalculator||'loan';
     for(const id of ids)document.getElementById(id).classList.toggle('hidden',id!==selected);
-    for(const link of menu.querySelectorAll('[data-tool]')){
+    for(const link of toolLinks){
       if(link.dataset.tool===selected)link.setAttribute('aria-current','page');
       else link.removeAttribute('aria-current');
     }

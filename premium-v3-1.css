@@ -23,19 +23,23 @@
 html[lang="en"] .result::before{content:"CALCULATION RESULT"}
 @media(min-width:1200px){.seo-article p,.seo-article li{max-width:90ch}}
 
-/* One launcher for all tools, with a keyboard-operable native disclosure. */
+/* Keep tool links visible and grouped in a single section. */
 .topbar{position:sticky;top:0;z-index:5;margin-bottom:0;background:rgba(25,31,51,.88);backdrop-filter:blur(18px)}
-.tools-trigger{display:flex;align-items:center;gap:8px;min-height:46px;padding:8px 13px;list-style:none;border:1px solid #8b81bd;border-radius:12px;background:linear-gradient(120deg,#423a66,#2d395b);color:#fff;font-weight:750;cursor:pointer}
-.tools-trigger::-webkit-details-marker{display:none}
-.tools-trigger:focus-visible,.tools-panel a:focus-visible{outline:2px solid #d5c9ff;outline-offset:3px}
-.tools-icon{width:14px;height:14px;background:radial-gradient(circle at 3px 3px,#d9cdff 2px,transparent 2.6px) 0 0/7px 7px}
-.tools-panel.seo-grid{position:absolute;top:calc(100% + 8px);right:0;width:min(680px,100%);max-height:65vh;overflow:auto;margin:0;padding:12px;gap:8px;background:#1d2439;border:1px solid #645887;border-radius:16px;box-shadow:0 22px 55px #0a1026a6}
-.tools-panel a{display:flex;align-items:center;min-height:44px}
+.tools-picker{margin:0 0 28px;padding:22px 24px;border:1px solid #555475;border-radius:20px;background:linear-gradient(140deg,#262c46,#20263a)}
+.tools-picker h2{margin:0;font-size:21px;letter-spacing:-.035em}
+.tools-picker .seo-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-top:13px}
+.tools-picker .seo-grid a{display:flex;align-items:center;min-height:48px;overflow-wrap:anywhere}
+.tools-picker .seo-grid a:focus-visible{outline:2px solid #d5c9ff}
+@media(max-width:1000px){.tools-picker .seo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:690px){
+ .brand{font-size:16px;gap:7px}
+ .brand-mark{width:38px;height:38px;border-radius:12px}
+ .tools-picker{padding:16px;margin-bottom:22px}
+ .tools-picker .seo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:480px){
  .topbar{gap:8px;padding:12px 0}
  .topbar-right{gap:6px}
- .tools-trigger{padding:7px 9px}
  .language-switch button{min-width:34px}
- .brand{gap:7px}
 }
-@media(max-width:350px){.tools-icon{display:none}}
+@media(max-width:360px){.brand{font-size:14px}}
