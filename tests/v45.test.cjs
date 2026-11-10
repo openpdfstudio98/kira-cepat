@@ -126,4 +126,5 @@ test('Pinjaman Pro mengira deposit, kadar rata dan baki berkurangan',()=>{
  assert.throws(()=>M.loanOffer(10000,-1,3,5,'reducing'),/Deposit/);
  assert.throws(()=>M.loanOffer(10000,0,3,0,'flat'),/Tempoh/);
  assert.throws(()=>M.loanOffer(10000,0,3,5,'unknown'),/Kaedah/);
+ assert.throws(()=>M.loanOffer(10000,0,0,Number.MIN_VALUE,'flat'),/tidak dapat dikira/);
 });

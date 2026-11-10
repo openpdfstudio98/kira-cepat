@@ -64,11 +64,11 @@ window.calcLoan=function(){
   if(b)grid.append(offerResult('Tawaran B',b));
   out.replaceChildren(grid);
   if(b){
-   const diff=Math.round(a.outlay*100)-Math.round(b.outlay*100);
+   const diff=Number(a.outlay.toFixed(2))-Number(b.outlay.toFixed(2));
    const summary=document.createElement('p');
    summary.className='loan-difference';
    summary.textContent=diff===0?'Jumlah keluar kedua-dua tawaran sama.':
-    (diff>0?'Tawaran B lebih rendah sebanyak: ':'Tawaran A lebih rendah sebanyak: ')+fmt(Math.abs(diff)/100);
+    (diff>0?'Tawaran B lebih rendah sebanyak: ':'Tawaran A lebih rendah sebanyak: ')+fmt(Math.abs(diff));
    out.append(summary);
   }
   out.dataset.resultReady='true';

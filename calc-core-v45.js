@@ -28,7 +28,9 @@
   const principal=cost-upfront;
   if(method==='reducing'){
    const result=loan(principal,annualRate,years);
-   return {...result,principal,outlay:result.total+upfront};
+   const outlay=result.total+upfront;
+   if(!Number.isFinite(outlay))throw Error('Nilai pinjaman tidak dapat dikira.');
+   return {...result,principal,outlay};
   }
   if(method!=='flat')throw Error('Kaedah pinjaman tidak sah.');
   const rate=nonnegative(annualRate,'Kadar faedah');
@@ -36,8 +38,9 @@
   if(term>100||rate>1200)throw Error('Tempoh atau kadar pinjaman melebihi julat simulasi.');
   const interest=principal*(rate/100)*term;
   const total=principal+interest;
-  if(!Number.isFinite(total+upfront))throw Error('Nilai pinjaman tidak dapat dikira.');
-  return {principal,interest,total,monthly:total/(term*12),outlay:total+upfront};
+  const monthly=total/(term*12),outlay=total+upfront;
+  if(!Number.isFinite(monthly)||!Number.isFinite(outlay))throw Error('Nilai pinjaman tidak dapat dikira.');
+  return {principal,interest,total,monthly,outlay};
  }
  function zakat(monthlyIncome,nisab){
   const annual=nonnegative(monthlyIncome,'Pendapatan')*12;
