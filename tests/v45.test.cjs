@@ -43,10 +43,11 @@ test('6 EPF: official RM3250 sample and 5000 threshold',()=>{
  assert.equal(a.employer,650);assert.ok(b.employer<650);
  assert.equal(M.epfPartA(0).employee,0);
 });
-test('7 SOCSO/EIS: explicitly approximate, capped at RM6000',()=>{
+test('7 SOCSO/EIS: scheduled first category contributions capped at RM6000',()=>{
  const a=M.approxContributions(6000),b=M.approxContributions(10000);
  assert.equal(a.estimated,true);close(a.socso,b.socso);close(a.eis,b.eis);
- close(a.socso,30);close(a.eis,12);
+ close(a.socso,29.75);close(a.eis,11.90);
+ assert.equal(a.source,'official-schedule');
 });
 test('8 income tax YA2025: published LHDN bracket boundaries',()=>{
  close(M.taxYA2025(20000,0).tax,150);
