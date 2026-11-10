@@ -78,13 +78,8 @@
 
 <div id="loan" class="card">
   <h2>Kalkulator Pinjaman</h2>
-  <p class="v2-note">Simulasi ansuran baki berkurangan dengan andaian kadar kekal. Semak kaedah dalam tawaran bank untuk pinjaman rumah atau kereta.</p>
-  <label>Jumlah Pinjaman (RM)</label>
-  <input id="l_amt" type="number" value="10000">
-  <label>Kadar Faedah (% setahun)</label>
-  <input id="l_rate" type="number" value="5" step="0.1">
-  <label>Tempoh (tahun)</label>
-  <input id="l_years" type="number" value="5">
+  <p class="v2-note">Baki berkurangan menggunakan kadar tahunan ÷ 12. Kadar rata mengenakan faedah atas jumlah pinjaman asal. Guna kadar dan kaedah dalam tawaran bank. Anggaran ini menganggap kadar kekal serta tidak termasuk yuran atau insurans.</p>
+  <div id="loan_pro_fields"></div>
   <button class="calc" onclick="calcLoan()">Kira Sekarang</button>
   <div class="result" id="l_res">Isi nilai dan tekan Kira.</div>
 </div>
@@ -134,6 +129,7 @@
 <script src="converter-v45.js" defer></script>
 <script src="ultimate-v2.js" defer></script>
 <script src="premium-v3-1.js" defer></script>
+<script src="saved-calculations.js" defer></script>
 <script src="language.js" defer></script>
 </body>
 </html>

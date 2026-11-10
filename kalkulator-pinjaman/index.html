@@ -69,7 +69,7 @@
   <div>
     <div class="eyebrow">MUDAH • PANTAS • JELAS</div>
     <h1 id="hero-title">Kalkulator Pinjaman<br><span>Malaysia</span></h1>
-    <p class="sub">Kalkulator ini menganggarkan ansuran pinjaman berdasarkan jumlah pokok, kadar faedah tahunan dan tempoh. Ia menggunakan formula ansuran berjadual yang biasanya dikenali sebagai kaedah baki berkurangan, bukan pengiraan kadar rata.</p>
+    <p class="sub">Bandingkan dua tawaran pinjaman menggunakan kaedah baki berkurangan atau kadar rata. Masukkan harga, deposit, kadar tahunan dan tempoh untuk melihat ansuran, faedah dan jumlah bayaran.</p>
   </div>
 </section>
 <div class="feature-strip" aria-label="Kelebihan"><span><b>✦</b> Akses percuma</span><span><b>✦</b> Paparan mesra telefon</span><span><b>✦</b> Kiraan pantas</span><span><b>✦</b> Fokus Malaysia</span></div>
@@ -80,13 +80,8 @@
 
 <div id="loan" class="card">
   <h2>Kalkulator Pinjaman</h2>
-  <p class="v2-note">Simulasi ansuran baki berkurangan dengan andaian kadar kekal. Semak kaedah dalam tawaran bank untuk pinjaman rumah atau kereta.</p>
-  <label>Jumlah Pinjaman (RM)</label>
-  <input id="l_amt" type="number" value="10000">
-  <label>Kadar Faedah (% setahun)</label>
-  <input id="l_rate" type="number" value="5" step="0.1">
-  <label>Tempoh (tahun)</label>
-  <input id="l_years" type="number" value="5">
+  <p class="v2-note">Baki berkurangan menggunakan kadar tahunan ÷ 12. Kadar rata mengenakan faedah atas jumlah pinjaman asal. Guna kadar dan kaedah dalam tawaran bank. Anggaran ini menganggap kadar kekal serta tidak termasuk yuran atau insurans.</p>
+  <div id="loan_pro_fields"></div>
   <button class="calc" onclick="calcLoan()">Kira Sekarang</button>
   <div class="result" id="l_res">Isi nilai dan tekan Kira.</div>
 </div>
@@ -127,7 +122,7 @@
 
 </div>
 </main>
-<section class="seo-article" aria-labelledby="guide-heading"><h2 id="guide-heading">Panduan Kalkulator Pinjaman</h2><p>Kalkulator ini menganggarkan ansuran pinjaman berdasarkan jumlah pokok, kadar faedah tahunan dan tempoh. Ia menggunakan formula ansuran berjadual yang biasanya dikenali sebagai kaedah baki berkurangan, bukan pengiraan kadar rata.</p><p>Bandingkan jumlah bayaran sepanjang tempoh, bukan ansuran bulanan sahaja. Kadar rata, fi pemprosesan, insurans dan kadar berubah-ubah boleh menghasilkan jumlah sebenar berbeza.</p><p class="seo-disclaimer">Nota: Hasil yang dipaparkan adalah simulasi atau anggaran. Semak rujukan rasmi untuk keputusan berkaitan kewangan, cukai, pekerjaan atau zakat.</p><h3>Pinjaman rumah dan kereta</h3><p><strong>Rumah.</strong> Pembiayaan perumahan lazimnya mengenakan faedah atau keuntungan atas baki tertunggak. Jika kadar terapung, ansuran boleh berubah apabila kadar berubah. Simulasi ini menganggap kadar kekal sepanjang tempoh.</p><p><strong>Kereta.</strong> Kadar rata mengira faedah atas jumlah asal pinjaman. Kaedah baki berkurangan mengira caj atas baki tertunggak. Di Malaysia, peralihan sewa beli kepada baki berkurangan dan kadar efektif bermula pada 1 Jun 2026, dengan tempoh peralihan hingga 31 Mac 2027. Semak kaedah dalam surat tawaran sebelum menggunakan simulasi ini.</p><p>Rujukan: <a href="https://www.bnm.gov.my/en/monetary-stability">Bank Negara Malaysia</a> dan <a href="https://www.abm.org.my/press-releases/banks-in-malaysia-introduce-changes-to-hire-purchase-financing-with-early-settlement-discounts/">Persatuan Bank-Bank Dalam Malaysia</a>.</p><h3>Soalan lazim</h3><details><summary>Bagaimana ansuran dikira?</summary><p>Jumlah pinjaman, kadar tahunan yang dibahagikan kepada kadar bulanan dan bilangan bulan digunakan untuk menganggarkan bayaran tetap.</p></details><details><summary>Adakah sama dengan pinjaman kadar rata?</summary><p>Tidak. Pengiraan ini menggunakan kaedah baki berkurangan; pinjaman kadar rata mempunyai formula lain.</p></details><details><summary>Adakah keputusan ini tawaran bank?</summary><p>Tidak. Ini simulasi umum, bukan kelulusan atau sebut harga bank.</p></details></section>
+<section class="seo-article" aria-labelledby="guide-heading"><h2 id="guide-heading">Panduan Kalkulator Pinjaman</h2><p>Bandingkan dua tawaran pinjaman menggunakan kaedah baki berkurangan atau kadar rata. Masukkan harga, deposit, kadar tahunan dan tempoh untuk melihat ansuran, faedah dan jumlah bayaran.</p><p>Bandingkan jumlah bayaran sepanjang tempoh, bukan ansuran bulanan sahaja. Kadar rata, fi pemprosesan, insurans dan kadar berubah-ubah boleh menghasilkan jumlah sebenar berbeza.</p><p class="seo-disclaimer">Nota: Hasil yang dipaparkan adalah simulasi atau anggaran. Semak rujukan rasmi untuk keputusan berkaitan kewangan, cukai, pekerjaan atau zakat.</p><h3>Pinjaman rumah dan kereta</h3><p><strong>Rumah.</strong> Pembiayaan perumahan lazimnya mengenakan faedah atau keuntungan atas baki tertunggak. Jika kadar terapung, ansuran boleh berubah apabila kadar berubah. Simulasi ini menganggap kadar kekal sepanjang tempoh.</p><p><strong>Kereta.</strong> Kadar rata mengira faedah atas jumlah asal pinjaman. Kaedah baki berkurangan mengira caj atas baki tertunggak. Di Malaysia, peralihan sewa beli kepada baki berkurangan dan kadar efektif bermula pada 1 Jun 2026, dengan tempoh peralihan hingga 31 Mac 2027. Semak kaedah dalam surat tawaran sebelum menggunakan simulasi ini.</p><p>Rujukan: <a href="https://www.bnm.gov.my/en/monetary-stability">Bank Negara Malaysia</a> dan <a href="https://www.abm.org.my/press-releases/banks-in-malaysia-introduce-changes-to-hire-purchase-financing-with-early-settlement-discounts/">Persatuan Bank-Bank Dalam Malaysia</a>.</p><h3>Soalan lazim</h3><details><summary>Bagaimana ansuran dikira?</summary><p>Untuk baki berkurangan, kalkulator menganggarkan bayaran tetap menggunakan baki pinjaman dan kadar tahunan yang dibahagikan kepada kadar bulanan. Untuk kadar rata, faedah dikira atas jumlah pinjaman asal sepanjang tempoh.</p></details><details><summary>Adakah sama dengan pinjaman kadar rata?</summary><p>Pilih kaedah yang dinyatakan dalam tawaran bank. Kedua-dua kaedah menggunakan formula yang berbeza.</p></details><details><summary>Adakah keputusan ini tawaran bank?</summary><p>Tidak. Ini simulasi umum, bukan kelulusan atau sebut harga bank.</p></details></section>
 <footer>Kira Cepat · Alat pengiraan percuma. Angka kewangan tertentu ialah anggaran dan bukan nasihat profesional.<nav class="footer-links" aria-label="Maklumat laman"><a href="../privasi/">Dasar Privasi</a><a href="https://github.com/openpdfstudio98/kira-cepat/issues">Laporkan masalah</a></nav></footer>
 </div>
 
@@ -136,6 +131,7 @@
 <script src="../converter-v45.js" defer></script>
 <script src="../ultimate-v2.js" defer></script>
 <script src="../premium-v3-1.js" defer></script>
+<script src="../saved-calculations.js" defer></script>
 <script src="../language.js" defer></script>
 </body>
 </html>

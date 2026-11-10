@@ -110,3 +110,20 @@ test('Penukaran rentas mata wang menggunakan kadar MYR dan mengecualikan ILS',()
  assert.throws(()=>M.convert('cur',1,'MYR','ILS',rates),/tidak disokong/);
  assert.throws(()=>M.convert('cur',1,'ILS','ILS'),/tidak disokong/);
 });
+
+test('Pinjaman Pro mengira deposit, kadar rata dan baki berkurangan',()=>{
+ const flat=M.loanOffer(100000,10000,3,5,'flat');
+ close(flat.principal,90000);
+ close(flat.interest,13500);
+ close(flat.monthly,1725);
+ close(flat.total,103500);
+ close(flat.outlay,113500);
+ const amortized=M.loanOffer(100000,10000,3,5,'reducing');
+ close(amortized.monthly,M.loan(90000,3,5).monthly);
+ close(amortized.outlay,amortized.total+10000);
+ close(M.loanOffer(100000,10000,0,5,'flat').monthly,1500);
+ assert.throws(()=>M.loanOffer(10000,10000,3,5,'flat'),/Deposit/);
+ assert.throws(()=>M.loanOffer(10000,-1,3,5,'reducing'),/Deposit/);
+ assert.throws(()=>M.loanOffer(10000,0,3,0,'flat'),/Tempoh/);
+ assert.throws(()=>M.loanOffer(10000,0,3,5,'unknown'),/Kaedah/);
+});

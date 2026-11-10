@@ -43,3 +43,28 @@ html[lang="en"] .result::before{content:"CALCULATION RESULT"}
  .language-switch button{min-width:34px}
 }
 @media(max-width:360px){.brand{font-size:14px}}
+
+.secondary-button{min-height:44px;padding:9px 14px;border:1px solid #6c6894;border-radius:10px;background:#2c324d;color:#f3efff;font:700 13px Inter,system-ui,sans-serif;cursor:pointer}
+.secondary-button:hover{background:#393b5d}
+.v31-actions .save-calculation{flex:1 1 150px}
+.card{scroll-margin-top:116px}
+.loan-compare{display:flex;align-items:center;gap:10px;margin:16px 0;font-size:14px}
+.card .loan-compare input{appearance:auto;width:20px;height:20px;min-height:0;margin:0;accent-color:#a89aff}
+.loan-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.loan-offer{margin:0;padding:12px 16px 16px;min-width:0;border:1px solid #514e71;border-radius:14px}
+.loan-offer legend{padding:0 7px;font-weight:700}
+.loan-grid section h3{margin:0 0 8px}
+.loan-grid section b{font-size:inherit}
+.loan-grid section div:first-of-type b{font-size:1.3em}
+.loan-difference{margin:14px 0 0;color:#ded5ff;font-weight:700}
+.currency-pair .currency-swap{flex:none;align-self:center;min-width:44px;font-size:20px}
+.currency-search-status{margin:7px 0 0;font-size:12px;color:#e8c2d3}
+.saved-calculations{margin-top:20px;padding:16px 20px;border:1px solid #514e71;border-radius:16px;background:#20263a}
+.saved-calculations summary{cursor:pointer;font-weight:700}
+.saved-calculations p,.saved-list{color:#d3d7e6;font-size:14px}
+.saved-status:empty{display:none}
+.saved-entry{padding:12px 0;border-top:1px solid #45465f}
+.saved-entry pre{margin:8px 0 12px;padding:12px;background:#181e30;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}
+.saved-actions{display:flex;flex-wrap:wrap;gap:8px}
+@media(min-width:760px){.loan-comparing .loan-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:690px){.v31-actions .save-calculation{flex:initial;width:100%}.currency-pair{gap:8px}}
