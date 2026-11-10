@@ -30,7 +30,9 @@ ZAR ZMW ZWG ZWL`.split(/\s+/);
   for(const select of [fromControl,toControl]){
    select.replaceChildren(...units[type].map(code=>{
     const name=type==='cur'?currencyNames?.of(code):null;
-    return new Option(name?`${code} — ${name}`:code,code);
+    const option=new Option(name?`${code} — ${name}`:code,code);
+    if(type==='cur')option.dataset.currency=code;
+    return option;
    }));
   }
   toControl.selectedIndex=1;
@@ -89,9 +91,11 @@ ZAR ZMW ZWG ZWL`.split(/\s+/);
     result.dataset.resultReady='true';
     result.textContent='';
     const label=document.createElement('b');label.textContent=out.toFixed(4)+' '+to;
-    const rateDate=new Intl.DateTimeFormat('ms-MY',{dateStyle:'medium',timeZone:'Asia/Kuala_Lumpur'}).format(timestamp);
-    result.append(document.createTextNode(v+' '+from+' = '),label,
-     document.createElement('br'),document.createTextNode('Tarikh kadar: '+rateDate+' (kadar rujukan; bukan kadar bank).'));
+    const date=document.createElement('time');
+    date.dataset.rateDate='';
+    date.dateTime=new Date(timestamp).toISOString();
+    date.textContent=new Intl.DateTimeFormat('ms-MY',{dateStyle:'medium',timeZone:'Asia/Kuala_Lumpur'}).format(timestamp);
+    result.append(v+' '+from+' = ',label,document.createElement('br'),'Tarikh kadar: ',date,' (kadar rujukan; bukan kadar bank).');
    }catch(e){
     if(id!==requestId)return;
     result.textContent='Kadar rujukan terkini tidak tersedia. Cuba semula sebentar lagi.';

@@ -53,8 +53,10 @@
     actions.className='v31-actions';
     const copyButton=card.querySelector('.v2-copy');
     if(copyButton)actions.appendChild(copyButton);
+    const localized=text=>window.KiraLanguage?.translate(text)??text;
+    const shareTitle=()=> 'Kira Cepat — '+localized(names[id]);
     function payload(){
-      return 'Kira Cepat — '+names[id]+'\n'+result.innerText.trim()+'\n'+location.origin+location.pathname+'#'+id+'\nNota: Semak maklumat dan syarat pengiraan pada laman web.';
+      return shareTitle()+'\n'+result.innerText.trim()+'\n'+location.origin+location.pathname+'#'+id+'\n'+localized('Nota: Semak maklumat dan syarat pengiraan pada laman web.');
     }
     const share=document.createElement('button');
     share.type='button';share.className='v31-share';share.textContent='Kongsi keputusan';
@@ -65,7 +67,7 @@
         status.textContent='Masukkan nilai yang sah dahulu.';return;
       }
       try{
-        if(navigator.share){await navigator.share({title:'Kira Cepat — '+names[id],text:payload()});status.textContent='';}
+        if(navigator.share){await navigator.share({title:shareTitle(),text:payload()});status.textContent='';}
         else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(payload());status.textContent='Disalin. Boleh tampal ke WhatsApp atau aplikasi lain.';}
         else status.textContent='Perkongsian tidak disokong dalam pelayar ini.';
       }catch(e){
