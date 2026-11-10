@@ -26,3 +26,11 @@
 @media(max-width:350px){
  .tabs .tab{flex-direction:column}
 }
+
+.language-switch{display:inline-flex;flex:none;align-items:center;gap:2px;padding:3px;border:1px solid var(--kc-line);border-radius:12px;background:var(--kc-surface)}
+.language-switch[hidden]{display:none}
+.language-switch button{min-width:42px;min-height:38px;padding:4px 8px;border:0;border-radius:8px;background:none;color:var(--kc-muted);font:700 12px Inter,system-ui,sans-serif;cursor:pointer}
+.language-switch button[aria-pressed="true"]{background:#302845;color:var(--kc-ink)}
+html[lang="en"] .result::before{content:"CALCULATION RESULT"}
+@media(min-width:1200px){.seo-article p,.seo-article li{max-width:90ch}}
+@media(max-width:480px){.topbar-right .topbar-caption,.topbar-right .status-dot{display:none}}
