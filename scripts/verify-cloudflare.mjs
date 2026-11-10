@@ -36,12 +36,19 @@ const robots=readFileSync(join(dir,'robots.txt'),'utf8');
 if(!robots.includes('Sitemap: '+base+'sitemap.xml')||!robots.includes(production?'\nAllow: /\n':'\nDisallow: /\n'))throw Error('Incorrect robots configuration');
 const privacy=readFileSync(join(dir,'privasi','index.html'),'utf8');
 if(!privacy.includes('<link rel="canonical" href="'+base+'privasi/">'))throw Error('Privacy canonical mismatch');
+const previewImage=readFileSync(join(dir,'share-preview-v1.jpg'));
+if(previewImage.length>300000||previewImage[0]!==0xff||previewImage[1]!==0xd8)throw Error('Share image must be a JPEG under 300 KB');
 const shouldHaveAdsTxt=production&&Boolean(process.env.ADSENSE_PUBLISHER_ID?.trim());
 if(existsSync(join(dir,'ads.txt'))!==shouldHaveAdsTxt)throw Error('Unexpected ads.txt state');
 if(shouldHaveAdsTxt&&readFileSync(join(dir,'ads.txt'),'utf8')!==
  `google.com, ${process.env.ADSENSE_PUBLISHER_ID.trim()}, DIRECT, f08c47fec0942fa0\n`)throw Error('Incorrect ads.txt entry');
 const shouldHaveAnalytics=production&&Boolean(process.env.CF_WEB_ANALYTICS_TOKEN?.trim());
 for(const html of [privacy,...paths.map(path=>readFileSync(join(dir,path,'index.html'),'utf8'))]){
+ const head=html.split('</head>')[0];
+ for(const name of ['title','description','type','url','image']){
+  const tags=[...head.matchAll(new RegExp('<meta property="og:'+name+'" content="([^"]+)">','g'))];
+  if(tags.length!==1||(name==='image'&&tags[0][1]!==base+'share-preview-v1.jpg'))throw Error('Invalid share metadata: og:'+name);
+ }
  const beaconCount=(html.match(/static\.cloudflareinsights\.com\/beacon\.min\.js/g)||[]).length;
  if(beaconCount!==Number(shouldHaveAnalytics))throw Error('Unexpected analytics beacon state');
  if(!production&&!html.includes('content="noindex,nofollow"'))throw Error('Preview HTML must be noindex');
