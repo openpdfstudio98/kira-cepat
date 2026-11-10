@@ -21,6 +21,27 @@
   if(!Number.isFinite(total))throw Error('Nilai pinjaman tidak dapat dikira.');
   return {monthly,total,interest:total-p};
  }
+ function loanOffer(price,deposit,annualRate,years,method){
+  const cost=positive(price,'Harga atau jumlah pinjaman');
+  const upfront=nonnegative(deposit,'Deposit');
+  if(upfront>=cost)throw Error('Deposit mesti kurang daripada harga.');
+  const principal=cost-upfront;
+  if(method==='reducing'){
+   const result=loan(principal,annualRate,years);
+   const outlay=result.total+upfront;
+   if(!Number.isFinite(outlay))throw Error('Nilai pinjaman tidak dapat dikira.');
+   return {...result,principal,outlay};
+  }
+  if(method!=='flat')throw Error('Kaedah pinjaman tidak sah.');
+  const rate=nonnegative(annualRate,'Kadar faedah');
+  const term=positive(years,'Tempoh pinjaman');
+  if(term>100||rate>1200)throw Error('Tempoh atau kadar pinjaman melebihi julat simulasi.');
+  const interest=principal*(rate/100)*term;
+  const total=principal+interest;
+  const monthly=total/(term*12),outlay=total+upfront;
+  if(!Number.isFinite(monthly)||!Number.isFinite(outlay))throw Error('Nilai pinjaman tidak dapat dikira.');
+  return {principal,interest,total,monthly,outlay};
+ }
  function zakat(monthlyIncome,nisab){
   const annual=nonnegative(monthlyIncome,'Pendapatan')*12;
   const threshold=nonnegative(nisab,'Nisab');
@@ -126,5 +147,5 @@
   if(!Number.isFinite(balance))throw Error('Nilai simpanan terlalu besar.');
   return {principal,returnAmount:balance-principal,balance};
  }
- return {loan,zakat,convert,epfPartA,perkesoFirstCategory,approxContributions,salary,overtime,taxYA2025,savings};
+ return {loan,loanOffer,zakat,convert,epfPartA,perkesoFirstCategory,approxContributions,salary,overtime,taxYA2025,savings};
 });

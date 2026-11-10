@@ -62,7 +62,7 @@
   "Jika diaktifkan, Cloudflare Web Analytics mengukur trafik dan prestasi halaman seperti halaman dilawati dan masa pemuatan. Nilai input dan hasil kalkulator tidak disertakan dalam analitik. Maklumat lanjut tersedia dalam": "When enabled, Cloudflare Web Analytics measures site traffic and performance, such as pages visited and load times. It does not include calculator inputs or results. Read the",
   "Jumlah Pinjaman (RM)": "Loan amount (RM)",
   "Jumlah kalkulator": "Number of calculators",
-  "Jumlah pinjaman, kadar tahunan yang dibahagikan kepada kadar bulanan dan bilangan bulan digunakan untuk menganggarkan bayaran tetap.": "The calculator uses the loan amount, annual rate divided by 12 and term in months to estimate a fixed monthly payment.",
+  "Untuk baki berkurangan, kalkulator menganggarkan bayaran tetap menggunakan baki pinjaman dan kadar tahunan yang dibahagikan kepada kadar bulanan. Untuk kadar rata, faedah dikira atas jumlah pinjaman asal sepanjang tempoh.": "For reducing balance, the calculator estimates a fixed payment using the outstanding principal and the annual rate divided by 12. For flat rate, interest is calculated on the original principal for the full term.",
   "Kadar Faedah (% setahun)": "Interest rate (% per year)",
   "Kadar rata mengira faedah atas jumlah asal pinjaman. Kaedah baki berkurangan mengira caj atas baki tertunggak. Di Malaysia, peralihan sewa beli kepada baki berkurangan dan kadar efektif bermula pada 1 Jun 2026, dengan tempoh peralihan hingga 31 Mac 2027. Semak kaedah dalam surat tawaran sebelum menggunakan simulasi ini.": "A flat rate charges interest on the original loan amount. A reducing balance rate charges interest on the outstanding amount. Malaysia began transitioning hire purchase to the reducing balance method and effective interest rates on 1 June 2026, with a transition period through 31 March 2027. Check your offer letter for the method used.",
   "Kadar rujukan boleh berbeza daripada kadar bank atau penyedia pembayaran. Aplikasi memaparkan mesej apabila kadar terkini tidak tersedia. Penukaran suhu menerima nilai negatif hingga had sifar mutlak.": "Reference rates can differ from the rates banks and payment providers offer. The converter shows a message when current rates are unavailable. Temperature conversion accepts negative values down to absolute zero.",
@@ -183,6 +183,28 @@
   "· Kadar rujukan harian.": "· Daily reference rates."
 };
   Object.assign(english,{
+    'Kaedah pinjaman':'Loan method','Baki berkurangan':'Reducing balance','Kadar rata':'Flat rate',
+    'Bandingkan dua tawaran':'Compare two offers','Tawaran A':'Offer A','Tawaran B':'Offer B',
+    'Harga atau jumlah pinjaman (RM)':'Price or loan amount (RM)','Harga atau jumlah pinjaman':'Price or loan amount',
+    'Deposit (RM)':'Deposit (RM)','Kadar tahunan mengikut kaedah (%)':'Annual rate for selected method (%)',
+    'Deposit mesti kurang daripada harga.':'The deposit must be less than the price.',
+    'Kaedah pinjaman tidak sah.':'Select a valid loan method.',
+    'Jumlah keluar kedua-dua tawaran sama.':'Both offers have the same total outlay.',
+    'Baki berkurangan menggunakan kadar tahunan ÷ 12. Kadar rata mengenakan faedah atas jumlah pinjaman asal. Guna kadar dan kaedah dalam tawaran bank. Anggaran ini menganggap kadar kekal serta tidak termasuk yuran atau insurans.':'Reducing balance uses the annual rate divided by 12. Flat rate charges interest on the original loan amount. Use the rate and method in your bank offer. This estimate assumes a constant rate and excludes fees and insurance.',
+    'Bandingkan dua tawaran pinjaman menggunakan kaedah baki berkurangan atau kadar rata. Masukkan harga, deposit, kadar tahunan dan tempoh untuk melihat ansuran, faedah dan jumlah bayaran.':'Compare two offers using reducing balance or flat-rate financing. Enter the price, deposit, annual rate and term to estimate instalments, interest and total payments.',
+    'Pilih kaedah yang dinyatakan dalam tawaran bank. Kedua-dua kaedah menggunakan formula yang berbeza.':'Choose the method stated in your bank offer. Each method uses a different formula.',
+    'Cari mata wang asal':'Search source currency','Cari mata wang sasaran':'Search destination currency',
+    'Tiada mata wang sepadan.':'No matching currencies.','Tukar arah mata wang':'Swap currencies',
+    'Simpan kiraan':'Save calculation','Kiraan disimpan':'Saved calculations',
+    'Simpanan ini berada dalam pelayar ini sahaja. Hasil asal kekal seperti ketika disimpan.':'These entries stay in this browser. Original results are shown as saved.',
+    'Simpanan pelayar tidak tersedia.':'Browser storage is unavailable.',
+    'Input disimpan telah dimuatkan.':'Saved inputs have been loaded.',
+    'Belum ada kiraan disimpan.':'No saved calculations yet.',
+    'Hasil asal':'Original result','Muat semula input':'Restore inputs','Padam':'Delete',
+    'Kiraan dipadam.':'Calculation deleted.','Kiraan disimpan.':'Calculation saved.',
+    'Had 50 kiraan dicapai. Padam satu kiraan untuk menyimpan yang baharu.':'The 50-calculation limit has been reached. Delete an entry to save a new one.',
+    'Jika anda memilih Simpan kiraan, input dan hasil asal disimpan dalam pelayar ini. Anda boleh memadamkannya melalui Kiraan disimpan.':'If you choose Save calculation, the inputs and original result stay in this browser. You can delete them under Saved calculations.',
+
     'Semua alat':'All tools','Penukar Unit':'Unit Converter','Penukar Mata Wang':'Currency Converter',
     'Penukar Unit Percuma | Kira Cepat':'Free Unit Converter | Kira Cepat',
     'Penukar Mata Wang Percuma | Kira Cepat':'Free Currency Converter | Kira Cepat',
@@ -258,6 +280,8 @@
     'Simpanan bulanan':'Monthly savings','Tempoh':'Term','Pulangan':'Return rate'
   });
   const resultLabels={
+    'Jumlah pinjaman':'Loan amount','Jumlah keluar termasuk deposit':'Total outlay including deposit',
+    'Tawaran A lebih rendah sebanyak':'Offer A is lower by','Tawaran B lebih rendah sebanyak':'Offer B is lower by',
     'Bayaran bulanan':'Monthly payment','Jumlah bayar':'Total repayment','Jumlah faedah':'Total interest',
     'Anggaran zakat pendapatan (2.5%)':'Estimated income zakat (2.5%)',
     'Gaji kasar':'Gross pay','KWSP pekerja (Part A)':'Employee EPF (Part A)',
@@ -282,6 +306,7 @@
   let current='ms';
   let currencyNames;
   let rateDate;
+  let savedDate;
   const translations=Object.assign(Object.create(null),english);
   function translate(source){
     if(current!=='en')return source;
@@ -305,7 +330,7 @@
   }
   function localizeText(node){
     const parent=node.parentElement;
-    if(!parent||parent.closest('script,style,[data-language-switch]'))return;
+    if(!parent||parent.closest('script,style,[data-language-switch],[data-saved-snapshot]'))return;
     const previous=textSources.get(node);
     const original=previous?.rendered===node.data?previous.original:node.data;
     let rendered=translate(original);
@@ -313,6 +338,8 @@
       const code=parent.dataset.currency;
       const name=currencyNames?.of(code);
       rendered=name?`${code} — ${name}`:code;
+    }else if(parent.matches('time[data-saved-date]')){
+      rendered=savedDate.format(new Date(parent.dateTime));
     }else if(parent.matches('time[data-rate-date]')){
       rendered=rateDate.format(new Date(parent.dateTime));
     }
@@ -349,6 +376,7 @@
     document.documentElement.lang=current;
     currencyNames=typeof Intl.DisplayNames==='function'?new Intl.DisplayNames(current,{type:'currency',fallback:'none'}):null;
     rateDate=new Intl.DateTimeFormat(current==='en'?'en-MY':'ms-MY',{dateStyle:'medium',timeZone:'Asia/Kuala_Lumpur'});
+    savedDate=new Intl.DateTimeFormat(current==='en'?'en-MY':'ms-MY',{dateStyle:'medium',timeStyle:'short'});
     localizeTree(document.documentElement);
     observer.takeRecords();
     controls.setAttribute('aria-label',translate('Bahasa paparan'));

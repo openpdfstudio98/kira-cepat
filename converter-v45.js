@@ -17,9 +17,12 @@ ZAR ZMW ZWG ZWL`.split(/\s+/);
  const unitCard=byId('conv');
  unitCard.insertAdjacentHTML('afterend',`<section id="currency" class="card hidden">
   <h2>Penukar Mata Wang</h2>
-  <div class="row">
-    <div><label for="fx_from">Dari</label><select id="fx_from"></select></div>
-    <div><label for="fx_to">Ke</label><select id="fx_to"></select></div>
+  <div class="row currency-pair">
+    <div><label for="fx_search_from">Cari mata wang asal</label><input id="fx_search_from" class="currency-search" type="search" autocomplete="off" aria-controls="fx_from">
+    <label for="fx_from">Dari</label><select id="fx_from"></select><p class="currency-search-status" role="status" hidden>Tiada mata wang sepadan.</p></div>
+    <button class="secondary-button currency-swap" id="fx_swap" type="button" aria-label="Tukar arah mata wang">⇄</button>
+    <div><label for="fx_search_to">Cari mata wang sasaran</label><input id="fx_search_to" class="currency-search" type="search" autocomplete="off" aria-controls="fx_to">
+    <label for="fx_to">Ke</label><select id="fx_to"></select><p class="currency-search-status" role="status" hidden>Tiada mata wang sepadan.</p></div>
   </div>
   <label for="fx_val">Nilai</label><input id="fx_val" type="number" min="0" step="any" value="1">
   <button type="button" class="calc" id="btn_currency">Tukar</button>
@@ -52,19 +55,62 @@ ZAR ZMW ZWG ZWL`.split(/\s+/);
   try{writeResult(unitResult,value,from,to,math.convert(unitType.value,value,from,to));}
   catch(e){unitResult.textContent=e.message;}
  });
- const currencyNames=typeof Intl.DisplayNames==='function'?new Intl.DisplayNames('ms',{type:'currency',fallback:'none'}):null;
- for(const id of ['fx_from','fx_to']){
-  byId(id).replaceChildren(...currencies.map(code=>{
-   const name=currencyNames?.of(code);
+ const hasDisplayNames=typeof Intl.DisplayNames==='function';
+ const malayNames=hasDisplayNames?new Intl.DisplayNames('ms',{type:'currency',fallback:'none'}):null;
+ const englishNames=hasDisplayNames?new Intl.DisplayNames('en',{type:'currency',fallback:'none'}):null;
+ const normalize=text=>text.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim();
+ const searchNames=new Map(currencies.map(code=>[code,normalize([code,malayNames?.of(code),englishNames?.of(code)].join(' '))]));
+ const clearSearch=[];
+ for(const direction of ['from','to']){
+  const select=byId('fx_'+direction);
+  const search=byId('fx_search_'+direction);
+  const status=select.nextElementSibling;
+  select.replaceChildren(...currencies.map(code=>{
+   const name=malayNames?.of(code);
    const option=new Option(name?`${code} — ${name}`:code,code);
    option.dataset.currency=code;
    return option;
   }));
+  function filter(){
+   const query=normalize(search.value);
+   const matches=[];
+   for(const option of select.options){
+    const matched=searchNames.get(option.value).includes(query);
+    option.hidden=!matched&&!option.selected;
+    if(matched)matches.push(option.value);
+   }
+   status.hidden=matches.length>0;
+   return matches;
+  }
+  search.addEventListener('input',filter);
+  search.addEventListener('keydown',event=>{
+   if(event.key!=='Enter'||!search.value.trim())return;
+   event.preventDefault();
+   const matches=filter();
+   const exact=search.value.trim().toUpperCase();
+   const choice=matches.includes(exact)?exact:matches[0];
+   if(!choice)return;
+   select.value=choice;
+   select.dispatchEvent(new Event('change',{bubbles:true}));
+   select.focus();
+  });
+  function reset(){search.value='';filter();}
+  clearSearch.push(reset);
+  select.addEventListener('change',reset);
  }
+ byId('fx_swap').addEventListener('click',()=>{
+  const from=byId('fx_from'),to=byId('fx_to');
+  [from.value,to.value]=[to.value,from.value];
+  clearSearch.forEach(reset=>reset());
+  byId('btn_currency').click();
+ });
  byId('fx_to').value='USD';
  const result=byId('fx_res');
  let cache=null,updatedAt=0,loading=null,requestId=0;
- function invalidate(){requestId++;clearResult(result);}
+ function invalidate(event){
+  if(event.target.matches('.currency-search'))return;
+  requestId++;clearResult(result);
+ }
  byId('currency').addEventListener('input',invalidate);
  byId('currency').addEventListener('change',invalidate);
  async function latest(){

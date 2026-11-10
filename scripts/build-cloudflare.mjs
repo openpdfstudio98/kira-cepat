@@ -19,7 +19,7 @@ const publisherId=preview?'':(process.env.ADSENSE_PUBLISHER_ID||'').trim();
 if(analyticsToken&&!/^[a-f0-9]{32}$/i.test(analyticsToken))throw Error('CF_WEB_ANALYTICS_TOKEN must be a Cloudflare Web Analytics site token.');
 if(publisherId&&!/^pub-[0-9]{16}$/.test(publisherId))throw Error('ADSENSE_PUBLISHER_ID must use the pub- followed by 16 digits format.');
 const slugs=['kalkulator-pinjaman','kalkulator-zakat-pendapatan','converter-unit-mata-wang','penukar-mata-wang','kalkulator-gaji-bersih','kalkulator-overtime','kalkulator-kwsp-epf','kalkulator-socso-eis','kalkulator-cukai-pendapatan','kalkulator-simpanan'];
-const assets=['index.html','favicon.png','premium-v3.css','premium-v3-1.css','premium-v3-1.js','ultimate-v2.js','seo-v4.css','calc-core-v45.js','legacy-v45.js','converter-v45.js','language.js'];
+const assets=['index.html','favicon.png','premium-v3.css','premium-v3-1.css','premium-v3-1.js','ultimate-v2.js','seo-v4.css','calc-core-v45.js','legacy-v45.js','converter-v45.js','language.js','saved-calculations.js'];
 for(const name of assets)if(!existsSync(join(root,name)))throw Error('Missing asset: '+name);
 for(const slug of [...slugs,'privasi'])if(!existsSync(join(root,slug,'index.html')))throw Error('Missing page: '+slug);
 rmSync(dist,{recursive:true,force:true});mkdirSync(dist,{recursive:true});
