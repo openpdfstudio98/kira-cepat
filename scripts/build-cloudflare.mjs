@@ -32,7 +32,7 @@ for(const file of pages(dist)){
  // Search Console verifies the production site's homepage source. Preserve
  // exactly one matching tag there; do not expose it on preview deployments.
  if(path==='index.html'&&!preview){
-  html=html.replace('</head>','<meta name="google-site-verification" content="W0jRa2Sy0OZ_iIiEbsTv875YhH2PZyrsbzebYxs9F0s" />\\n</head>');
+  html=html.replace('</head>','<meta name="google-site-verification" content="W0jRa2Sy0OZ_iIiEbsTv875YhH2PZyrsbzebYxs9F0s" />\n</head>');
  }
  if(preview)html=html.replace(/<meta name="robots" content="[^"]*">/g,'<meta name="robots" content="noindex,nofollow">');
  writeFileSync(file,html);
