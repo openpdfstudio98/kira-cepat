@@ -15,7 +15,7 @@ const base=url.origin+'/';
 const deployedBranch=process.env.WORKERS_CI_BRANCH||process.env.CF_PAGES_BRANCH||'';
 const preview=Boolean(deployedBranch&&deployedBranch!=='master');
 const slugs=['kalkulator-pinjaman','kalkulator-zakat-pendapatan','converter-unit-mata-wang','kalkulator-gaji-bersih','kalkulator-overtime','kalkulator-kwsp-epf','kalkulator-socso-eis','kalkulator-cukai-pendapatan','kalkulator-simpanan'];
-const assets=['index.html','favicon.png','premium-v3.css','premium-v3-1.css','premium-v3-1.js','ultimate-v2.js','seo-v4.css','calc-core-v45.js','legacy-v45.js','converter-v45.js'];
+const assets=['index.html','favicon.png','premium-v3.css','premium-v3-1.css','premium-v3-1.js','ultimate-v2.js','seo-v4.css','calc-core-v45.js','legacy-v45.js','converter-v45.js','contribution-tables-v46.js'];
 for(const name of assets)if(!existsSync(join(root,name)))throw Error('Missing asset: '+name);
 for(const slug of slugs)if(!existsSync(join(root,slug,'index.html')))throw Error('Missing page: '+slug);
 rmSync(dist,{recursive:true,force:true});mkdirSync(dist,{recursive:true});
