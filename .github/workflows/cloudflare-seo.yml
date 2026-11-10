@@ -15,6 +15,8 @@ jobs:
         env:
           SITE_URL: https://kira-cepat-ci-example.pages.dev
         run: node scripts/build-cloudflare.mjs
+      - name: Regression tests — nine calculator engines
+        run: node --test tests/v45.test.cjs
       - name: Verify ten pages and SEO metadata
         env:
           SITE_URL: https://kira-cepat-ci-example.pages.dev
