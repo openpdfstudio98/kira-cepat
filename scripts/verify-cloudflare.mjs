@@ -2,7 +2,7 @@ import{readFileSync,readdirSync,statSync,existsSync}from'node:fs';
 import{join}from'node:path';
 const dir=new URL('../dist/',import.meta.url).pathname;
 const base=new URL(process.env.SITE_URL).origin+'/';
-const paths=['', 'kalkulator-pinjaman/','kalkulator-zakat-pendapatan/','converter-unit-mata-wang/','kalkulator-gaji-bersih/','kalkulator-overtime/','kalkulator-kwsp-epf/','kalkulator-socso-eis/','kalkulator-cukai-pendapatan/','kalkulator-simpanan/'];
+const paths=['', 'kalkulator-pinjaman/','kalkulator-zakat-pendapatan/','converter-unit-mata-wang/','penukar-mata-wang/','kalkulator-gaji-bersih/','kalkulator-overtime/','kalkulator-kwsp-epf/','kalkulator-socso-eis/','kalkulator-cukai-pendapatan/','kalkulator-simpanan/'];
 const verification='W0jRa2Sy0OZ_iIiEbsTv875YhH2PZyrsbzebYxs9F0s';
 const homepage=readFileSync(join(dir,'index.html'),'utf8');
 const branch=process.env.WORKERS_CI_BRANCH||process.env.CF_PAGES_BRANCH||'';
@@ -11,7 +11,7 @@ const tags=[...homepage.matchAll(/<meta name="google-site-verification" content=
 if(production&&(tags.length!==1||tags[0]!==verification))throw Error('Production homepage must contain exactly one matching Google verification tag');
 if(!production&&tags.length)throw Error('Preview must not contain Google verification tag');
 const xml=readFileSync(join(dir,'sitemap.xml'),'utf8');
-if((xml.match(/<url>/g)||[]).length!==10)throw Error('Sitemap should contain ten URLs');
+if((xml.match(/<url>/g)||[]).length!==paths.length)throw Error('Sitemap URL count does not match the published pages');
 if(xml.includes('github.io'))throw Error('Sitemap still uses previous host');
 for(const path of paths){
  const html=readFileSync(join(dir,path,'index.html'),'utf8');
@@ -22,6 +22,7 @@ for(const path of paths){
  if(html.includes('openpdfstudio98.github.io/kira-cepat/'))throw Error('Old domain remains in '+path);
  if(!xml.includes('<loc>'+canonical+'</loc>'))throw Error('Sitemap missing '+canonical);
  if(html.includes('USD:4.7')||html.includes('EUR:5.1'))throw Error('Stale currency fallback remains in '+path);
+ if((html.match(/class="tools-trigger"/g)||[]).length!==1||(html.match(/data-tool="/g)||[]).length!==10)throw Error('Expected one menu with ten tools: '+path);
  const prefix=path?'../':'';
  for(const asset of ['premium-v3.css','premium-v3-1.css','seo-v4.css','ultimate-v2.js','premium-v3-1.js','calc-core-v45.js','legacy-v45.js','converter-v45.js','language.js','favicon.png']){
   if(!existsSync(join(dir,asset)))throw Error('Shared asset not in output: '+asset);
@@ -43,4 +44,4 @@ for(const html of [privacy,...paths.map(path=>readFileSync(join(dir,path,'index.
  if(!production&&!html.includes('content="noindex,nofollow"'))throw Error('Preview HTML must be noindex');
  if(html.includes('pagead2.googlesyndication.com'))throw Error('Unexpected AdSense ad script');
 }
-console.log('PASS: 10 accessible static HTML files, canonicals, Open Graph URLs, assets, sitemap and robots configuration.');
+console.log('PASS: 11 accessible static HTML files, canonicals, Open Graph URLs, assets, sitemap and robots configuration.');

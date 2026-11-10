@@ -1,9 +1,9 @@
 /* Kira Cepat Ultimate V3 — Premium Black Design System */
-:root{color-scheme:dark;--kc-bg:#08090b;--kc-surface:#101217;--kc-surface2:#171a21;--kc-ink:#f7f8fa;--kc-muted:#9ca4b5;--kc-line:#2a2e38;--kc-accent:#9e8cff;--kc-accent2:#68b7ff;--kc-gold:#e5bd72}
+:root{color-scheme:dark;--kc-bg:#151c31;--kc-surface:#171e31;--kc-surface2:#202940;--kc-ink:#f7f8fa;--kc-muted:#9ca4b5;--kc-line:#2a2e38;--kc-accent:#9e8cff;--kc-accent2:#68b7ff;--kc-gold:#e5bd72}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;min-height:100vh;padding:0 clamp(24px,2.5vw,48px) 56px;background:radial-gradient(ellipse 45% 28% at 65% -8%,rgba(125,100,224,.16),transparent 80%),linear-gradient(155deg,#0c0d10 0%,#08090b 60%,#0d0e13 100%);color:var(--kc-ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-body:before{position:fixed;content:"";inset:0;pointer-events:none;opacity:.09;background-image:radial-gradient(rgba(255,255,255,.34) .5px,transparent .5px);background-size:9px 9px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
+body{margin:0;min-height:100vh;padding:0 clamp(24px,2.5vw,48px) 56px;background:radial-gradient(ellipse at 82% 0%,#49396b 0%,transparent 48%),radial-gradient(ellipse at 0% 38%,#233f58 0%,transparent 58%),linear-gradient(145deg,#22253e,#151c31 65%,#24233b);background-attachment:fixed;color:var(--kc-ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body:before{position:fixed;content:"";inset:0;pointer-events:none;background:repeating-linear-gradient(45deg,transparent 0 32px,rgba(200,189,254,.09) 32px 33px,transparent 33px 65px),repeating-linear-gradient(-45deg,transparent 0 32px,rgba(174,206,255,.08) 32px 33px,transparent 33px 65px);mask-image:linear-gradient(black,rgba(0,0,0,.54))}
 .wrap{width:100%;max-width:none;margin:auto;position:relative}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(255,255,255,.085);padding:22px 0}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--kc-ink);font-size:16px;font-weight:800;letter-spacing:-.045em}
@@ -25,7 +25,7 @@ h1 span{background:linear-gradient(90deg,#f0eaff 5%,#a6a1ff 56%,#84c6ff);backgro
 .workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 15px}
 .workspace-heading h2{font-size:17px;font-weight:750;letter-spacing:-.035em;margin:0}
 .workspace-heading p{font-size:12px;color:var(--kc-muted);margin:0}
-.workspace{display:grid;grid-template-columns:clamp(220px,18vw,300px) minmax(0,1fr);gap:20px;align-items:start}
+.workspace{display:block;scroll-margin-top:94px}
 .tabs{display:flex;flex-direction:column;flex-wrap:nowrap;gap:5px;position:sticky;top:18px;margin:0;padding:10px;border-radius:19px;border:1px solid var(--kc-line);background:rgba(17,19,25,.94);backdrop-filter:blur(18px)}
 .tab{display:flex;align-items:center;gap:12px;flex:initial;min-width:0;width:100%;min-height:48px;padding:12px 13px;border:none;border-radius:12px;color:#aab2c0;background:transparent;font-size:13px;font-weight:650;text-align:left;cursor:pointer;transition:background .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease}
 .tab:hover{color:#f5f5fa;background:#23252f;transform:translateX(2px)}
@@ -33,7 +33,7 @@ h1 span{background:linear-gradient(90deg,#f0eaff 5%,#a6a1ff 56%,#84c6ff);backgro
 .tab-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;border:1px solid #373743;background:#21212b;border-radius:9px;color:#c6c3e8;font-weight:800;font-size:12px}
 .tab.active .tab-icon{color:#efebff;background:#393253;border-color:#65598c}
 .workspace-content{min-width:0}
-.card{min-height:420px;border-radius:22px;padding:32px 34px 30px;background:linear-gradient(152deg,rgba(29,30,38,.96),rgba(17,18,23,.99) 66%);border:1px solid #34343d;box-shadow:0 24px 70px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:none;animation:kcEnter .28s ease both}
+.card{min-height:420px;border-radius:22px;padding:32px 34px 30px;background:linear-gradient(152deg,rgba(40,47,71,.98),rgba(22,27,44,.99) 70%);border:1px solid #34343d;box-shadow:0 24px 70px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:none;animation:kcEnter .28s ease both}
 .card.hidden{display:none}
 .card h2{font-size:24px;letter-spacing:-.05em;line-height:1.25;margin:0 0 22px;color:#f8f8fc}
 .card label{font-size:12px;letter-spacing:.01em;color:#c7cbd6;margin-top:19px;margin-bottom:7px;font-weight:650}
@@ -56,7 +56,7 @@ h1 span{background:linear-gradient(90deg,#f0eaff 5%,#a6a1ff 56%,#84c6ff);backgro
 button:focus-visible,.tab:focus-visible,.calc:focus-visible,.v2-copy:focus-visible{outline:2px solid #c3b6ff;outline-offset:3px}
 footer{border-top:1px solid var(--kc-line);padding-top:25px;margin-top:45px;font-size:12px;color:#898f9f;text-align:center}
 @keyframes kcEnter{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:900px){.hero{padding:52px 0 34px}.workspace{grid-template-columns:210px minmax(0,1fr)}.card{padding:27px}.tabs{top:12px}.hero-stats{min-width:130px}}
+@media(max-width:900px){.hero{padding:52px 0 34px}.card{padding:27px}.tabs{top:12px}.hero-stats{min-width:130px}}
 @media(max-width:690px){body{padding:0 15px 36px}.topbar{padding:18px 0}.topbar-tag{display:none}.hero{grid-template-columns:1fr;padding:42px 0 28px}.hero-stats{flex-direction:row;align-items:baseline;justify-content:space-between;padding:15px 18px;max-width:240px}.hero-stats strong{font-size:29px}h1{font-size:clamp(39px,10vw,56px)}.sub{font-size:14px;margin-top:14px}.feature-strip{margin-bottom:25px}.workspace-heading{align-items:flex-start;flex-direction:column}.workspace{display:block}.tabs{position:relative;top:auto;display:flex;flex-direction:row;overflow-x:auto;flex-wrap:nowrap;gap:7px;margin:0 0 16px;padding:8px;scroll-snap-type:x proximity;scrollbar-width:thin}.tab{flex:0 0 auto;width:auto;min-width:96px;min-height:46px;padding:10px;scroll-snap-align:start;justify-content:center;white-space:nowrap}.tab:hover{transform:none}.tab-icon{width:24px;height:24px}.card{padding:23px 20px;min-height:360px}.card h2{font-size:22px}.row{flex-direction:column}.row > *{min-width:0}}
 @media(max-width:360px){body{padding-left:11px;padding-right:11px}.card{padding:20px 15px}.topbar-right{font-size:11px}.brand{font-size:14px}.tab{min-width:90px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{animation:none}*,*:before,*:after{transition:none!important}}

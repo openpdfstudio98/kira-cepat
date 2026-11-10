@@ -4,27 +4,16 @@
 .v31-share{background:linear-gradient(105deg,#aea0ff,#7cb8ff);color:#090c12;border:1px solid transparent}
 .v31-share:hover{filter:brightness(1.08);transform:translateY(-1px)}
 .v31-action-status{flex:1 0 100%;font-size:12px;color:#bfb2ff;min-height:0}
-.tab[aria-current="true"]{background:linear-gradient(100deg,#28243d,#242a3c);color:#f8f7ff}
-.workspace-heading{scroll-margin-top:12px}
 @media(max-width:690px){
- .tabs{scroll-padding:8px}
- .tab{min-height:48px}
  .v31-actions{flex-direction:column}
  .v31-actions .v2-copy,.v31-actions .v31-share{flex:initial;width:100%;min-height:46px}
 }
 @media(prefers-reduced-motion:reduce){.v31-actions button{transform:none!important}}
 
-/* Ultimate V5: keep every calculator visible at mobile widths. */
 .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;margin-top:8px}
 .footer-links a{display:inline-flex;align-items:center;min-height:44px;color:#c8b6ff;text-underline-offset:4px}
 @media(max-width:690px){
- .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
- .tabs .tab{width:100%;min-width:0;min-height:52px;gap:5px;padding:7px 4px;white-space:normal;text-align:center;overflow-wrap:anywhere;font-size:12px}
- .tabs .tab-icon{width:21px;height:21px;font-size:10px}
  .card input,.card select{font-size:16px}
-}
-@media(max-width:350px){
- .tabs .tab{flex-direction:column}
 }
 
 .language-switch{display:inline-flex;flex:none;align-items:center;gap:2px;padding:3px;border:1px solid var(--kc-line);border-radius:12px;background:var(--kc-surface)}
@@ -33,4 +22,20 @@
 .language-switch button[aria-pressed="true"]{background:#302845;color:var(--kc-ink)}
 html[lang="en"] .result::before{content:"CALCULATION RESULT"}
 @media(min-width:1200px){.seo-article p,.seo-article li{max-width:90ch}}
-@media(max-width:480px){.topbar-right .topbar-caption,.topbar-right .status-dot{display:none}}
+
+/* One launcher for all tools, with a keyboard-operable native disclosure. */
+.topbar{position:sticky;top:0;z-index:5;margin-bottom:0;background:rgba(25,31,51,.88);backdrop-filter:blur(18px)}
+.tools-trigger{display:flex;align-items:center;gap:8px;min-height:46px;padding:8px 13px;list-style:none;border:1px solid #8b81bd;border-radius:12px;background:linear-gradient(120deg,#423a66,#2d395b);color:#fff;font-weight:750;cursor:pointer}
+.tools-trigger::-webkit-details-marker{display:none}
+.tools-trigger:focus-visible,.tools-panel a:focus-visible{outline:2px solid #d5c9ff;outline-offset:3px}
+.tools-icon{width:14px;height:14px;background:radial-gradient(circle at 3px 3px,#d9cdff 2px,transparent 2.6px) 0 0/7px 7px}
+.tools-panel.seo-grid{position:absolute;top:calc(100% + 8px);right:0;width:min(680px,100%);max-height:65vh;overflow:auto;margin:0;padding:12px;gap:8px;background:#1d2439;border:1px solid #645887;border-radius:16px;box-shadow:0 22px 55px #0a1026a6}
+.tools-panel a{display:flex;align-items:center;min-height:44px}
+@media(max-width:480px){
+ .topbar{gap:8px;padding:12px 0}
+ .topbar-right{gap:6px}
+ .tools-trigger{padding:7px 9px}
+ .language-switch button{min-width:34px}
+ .brand{gap:7px}
+}
+@media(max-width:350px){.tools-icon{display:none}}
