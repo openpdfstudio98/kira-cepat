@@ -39,6 +39,7 @@
   }
   if(v<0)throw Error('Nilai perlu bukan negatif untuk penukaran ini.');
   if(type==='cur'){
+   if(from==='ILS'||to==='ILS')throw Error('Mata wang tidak disokong.');
    if(from===to && /^[A-Z]{3}$/.test(from))return v;
    if(!rates||!Number.isFinite(rates[from])||!Number.isFinite(rates[to])||rates[from]<=0||rates[to]<=0)throw Error('Kadar langsung belum tersedia. Semak sambungan internet.');
    return v*rates[to]/rates[from];
