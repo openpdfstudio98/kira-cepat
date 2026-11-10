@@ -21,3 +21,14 @@ jobs:
         env:
           SITE_URL: https://kira-cepat-ci-example.pages.dev
         run: node scripts/verify-cloudflare.mjs
+      - name: Verify optional V5 integrations and preview isolation
+        env:
+          SITE_URL: https://kira-cepat-ci-example.pages.dev
+          CF_WEB_ANALYTICS_TOKEN: '00000000000000000000000000000000'
+          ADSENSE_PUBLISHER_ID: pub-0000000000000000
+        run: |
+          node scripts/build-cloudflare.mjs
+          node scripts/verify-cloudflare.mjs
+          export WORKERS_CI_BRANCH=ci-preview
+          node scripts/build-cloudflare.mjs
+          node scripts/verify-cloudflare.mjs

@@ -5,7 +5,8 @@ const base=new URL(process.env.SITE_URL).origin+'/';
 const paths=['', 'kalkulator-pinjaman/','kalkulator-zakat-pendapatan/','converter-unit-mata-wang/','kalkulator-gaji-bersih/','kalkulator-overtime/','kalkulator-kwsp-epf/','kalkulator-socso-eis/','kalkulator-cukai-pendapatan/','kalkulator-simpanan/'];
 const verification='W0jRa2Sy0OZ_iIiEbsTv875YhH2PZyrsbzebYxs9F0s';
 const homepage=readFileSync(join(dir,'index.html'),'utf8');
-const production=!(process.env.WORKERS_CI_BRANCH&&process.env.WORKERS_CI_BRANCH!=='master');
+const branch=process.env.WORKERS_CI_BRANCH||process.env.CF_PAGES_BRANCH||'';
+const production=!branch||branch==='master';
 const tags=[...homepage.matchAll(/<meta name="google-site-verification" content="([^"]+)"\s*\/?\s*>/g)].map(m=>m[1]);
 if(production&&(tags.length!==1||tags[0]!==verification))throw Error('Production homepage must contain exactly one matching Google verification tag');
 if(!production&&tags.length)throw Error('Preview must not contain Google verification tag');
@@ -27,5 +28,19 @@ for(const path of paths){
   if(!html.includes(prefix+asset))throw Error('HTML missing shared asset: '+path+asset);
  }
 }
-if(!readFileSync(join(dir,'robots.txt'),'utf8').includes('Sitemap: '+base+'sitemap.xml'))throw Error('Incorrect robots sitemap');
+const robots=readFileSync(join(dir,'robots.txt'),'utf8');
+if(!robots.includes('Sitemap: '+base+'sitemap.xml')||!robots.includes(production?'\nAllow: /\n':'\nDisallow: /\n'))throw Error('Incorrect robots configuration');
+const privacy=readFileSync(join(dir,'privasi','index.html'),'utf8');
+if(!privacy.includes('<link rel="canonical" href="'+base+'privasi/">'))throw Error('Privacy canonical mismatch');
+const shouldHaveAdsTxt=production&&Boolean(process.env.ADSENSE_PUBLISHER_ID?.trim());
+if(existsSync(join(dir,'ads.txt'))!==shouldHaveAdsTxt)throw Error('Unexpected ads.txt state');
+if(shouldHaveAdsTxt&&readFileSync(join(dir,'ads.txt'),'utf8')!==
+ `google.com, ${process.env.ADSENSE_PUBLISHER_ID.trim()}, DIRECT, f08c47fec0942fa0\n`)throw Error('Incorrect ads.txt entry');
+const shouldHaveAnalytics=production&&Boolean(process.env.CF_WEB_ANALYTICS_TOKEN?.trim());
+for(const html of [privacy,...paths.map(path=>readFileSync(join(dir,path,'index.html'),'utf8'))]){
+ const beaconCount=(html.match(/static\.cloudflareinsights\.com\/beacon\.min\.js/g)||[]).length;
+ if(beaconCount!==Number(shouldHaveAnalytics))throw Error('Unexpected analytics beacon state');
+ if(!production&&!html.includes('content="noindex,nofollow"'))throw Error('Preview HTML must be noindex');
+ if(html.includes('pagead2.googlesyndication.com'))throw Error('Unexpected AdSense ad script');
+}
 console.log('PASS: 10 accessible static HTML files, canonicals, Open Graph URLs, assets, sitemap and robots configuration.');

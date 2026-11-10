@@ -6,6 +6,14 @@
  const endpoint='https://api.exchangerate-api.com/v4/latest/MYR';
  let cache=null, updatedAt=0,loading=null,rateDate='';
  const result=document.getElementById('c_res');
+ let requestId=0;
+ function invalidate(){
+  requestId++;
+  result.dataset.resultReady='false';
+  result.textContent='Isi nilai dan tekan Tukar.';
+ }
+ document.getElementById('conv').addEventListener('input',invalidate);
+ document.getElementById('conv').addEventListener('change',invalidate);
  async function latest(){
   if(cache && Date.now()-updatedAt<60*60*1000)return cache;
   if(loading)return loading;
@@ -29,27 +37,34 @@
   return loading;
  }
  window.calcConv=async function(){
+  const id=++requestId;
+  result.dataset.resultReady='false';
   const type=document.getElementById('c_type').value;
   const input=document.getElementById('c_val');
   const from=document.getElementById('c_from').value,to=document.getElementById('c_to').value;
   const v=input.value;
   if(v.trim()===''){result.textContent='Sila masukkan nilai.';return;}
+  if(type==='cur'&&Number(v)<0){result.textContent='Nilai perlu bukan negatif untuk penukaran ini.';return;}
   if(type==='cur'&&from!==to){
    result.textContent='Mendapatkan kadar mata wang terkini...';
    try{
     const rates=await latest();
+    if(id!==requestId)return;
     const out=math.convert(type,v,from,to,rates);
+    result.dataset.resultReady='true';
     result.textContent='';
     const label=document.createElement('b');label.textContent=out.toFixed(4)+' '+to;
     result.append(document.createTextNode(v+' '+from+' = '),label,
      document.createElement('br'),document.createTextNode('Tarikh kadar: '+rateDate+' (kadar rujukan; bukan kadar bank).'));
    }catch(e){
+    if(id!==requestId)return;
     result.textContent='Kadar pertukaran langsung tidak tersedia atau terlalu lama. Tiada anggaran lama digunakan. Cuba semula apabila internet stabil.';
    }
    return;
   }
   try{
    const out=math.convert(type,v,from,to);
+   result.dataset.resultReady='true';
    result.textContent='';
    const label=document.createElement('b');label.textContent=out.toFixed(4)+' '+to;
    result.append(document.createTextNode(v+' '+from+' = '),label);

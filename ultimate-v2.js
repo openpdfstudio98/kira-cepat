@@ -8,17 +8,21 @@ const number = (id,allowZero=true) => {
   if(el.value.trim()===''||!Number.isFinite(n)||n<0||(!allowZero&&n===0)) throw Error('Sila isi nilai yang sah dan tidak negatif.');
   return n;
 };
-const output=(id,html)=>{$(id).innerHTML=html;};
-const error=(id,e)=>output(id,'<span class="error">'+e.message+'</span>');
+const output=(id,html)=>{$(id).innerHTML=html;$(id).classList.remove('error');$(id).dataset.resultReady='true';};
+const error=(id,e)=>{
+  $(id).textContent=e.message;
+  $(id).classList.add('error');
+  $(id).dataset.resultReady='false';
+};
 const field=(label,id,value,step='0.01')=>'<label for="'+id+'">'+label+'</label><input id="'+id+'" type="number" min="0" step="'+step+'" value="'+value+'">';
 const result=id=>'<div class="result" id="'+id+'" role="status" aria-live="polite">Masukkan nilai dan tekan Kira.</div>';
 const button=(method,label='Kira Sekarang')=>'<button type="button" class="calc" id="btn_'+method+'">'+label+'</button>';
 const note=s=>'<p class="v2-note">'+s+'</p>';
 const sections=[
-['salary','Gaji Bersih',field('Gaji asas bulanan (RM)','s_base',3500)+field('Elaun tetap (RM)','s_allow',200)+field('Bayaran OT (RM)','s_ot',0)+field('Potongan lain (RM)','s_other',0)+button('salary')+result('s_res')+note('Anggaran pekerja warganegara bawah 60 tahun. Tidak termasuk PCB, bonus atau pengecualian khusus. KWSP Part A (Oktober 2025), PERKESO Akta 4 kategori pertama dan EIS Akta 800 (Oktober 2024). Andaian pekerja layak bawah 60 tahun. PCB tidak termasuk; pastikan komponen gaji tertakluk caruman adalah betul.')],
+['salary','Gaji Bersih',field('Gaji asas bulanan (RM)','s_base',3500)+field('Elaun tetap tertakluk caruman (RM)','s_allow',200)+field('Bayaran OT (RM)','s_ot',0)+field('Potongan lain (RM)','s_other',0)+button('salary')+result('s_res')+note('Anggaran bagi warganegara Malaysia bawah 60 tahun yang layak untuk KWSP Bahagian A, SOCSO kategori pertama dan EIS. Bayaran OT masuk dalam asas SOCSO dan EIS; asas KWSP menggunakan gaji asas dan elaun tertakluk caruman sahaja. PCB dan bonus tidak termasuk.')],
 ['ot','Kalkulator Overtime',field('Gaji asas sebulan (RM)','o_pay',3500)+field('Hari bekerja untuk asas kadar harian','o_days',26,'1')+field('Jam kerja sehari','o_daily',8,'0.5')+field('Jumlah jam OT','o_hours',10,'0.5')+'<label for="o_multi">Pengganda kadar OT</label><select id="o_multi"><option value="1.5">1.5×</option><option value="2">2.0×</option><option value="3">3.0×</option></select>'+button('ot')+result('o_res')+note('Anggaran menggunakan gaji bulanan ÷ hari bekerja ÷ jam sehari. Kelayakan, kaedah pengiraan dan kadar OT sebenar bergantung pada undang-undang serta kontrak pekerjaan.')],
 ['epf','Caruman KWSP / EPF',field('Gaji tertakluk caruman (RM)','e_pay',3500)+button('epf')+result('e_res')+note('Pengiraan julat gaji Jadual Ketiga KWSP (Part A), berkuat kuasa Oktober 2025, bagi warganegara Malaysia/PR bawah 60 tahun sahaja. Kes khusus, kadar sukarela dan kategori pekerja lain tidak termasuk. Untuk pekerja Malaysia bawah 60 tahun sahaja. <a href="https://www.kwsp.gov.my/en/employer/responsibilities/mandatory-contribution" target="_blank" rel="noopener noreferrer">KWSP rasmi</a>.')],
-['socso','SOCSO & EIS',field('Gaji bulanan (RM)','p_pay',3500)+button('socso')+result('p_res')+note('Jadual PERKESO rasmi Akta 4 kategori pertama (pekerja layak bawah 60 tahun) dan Akta 800 EIS, berkuat kuasa Oktober 2024, siling RM6,000. Kategori kedua, pekerja tidak layak EIS dan pengecualian lain tidak disokong. Sahkan kelayakan sebelum guna untuk payroll. <a href="https://perkeso.gov.my/en/our-services/employer-employee/contributions" target="_blank" rel="noopener noreferrer">PERKESO rasmi</a>.')],
+['socso','SOCSO & EIS',field('Gaji bulanan (RM)','p_pay',3500)+button('socso')+result('p_res')+note('Jadual PERKESO rasmi Akta 4 kategori pertama (pekerja layak bawah 60 tahun) dan Akta 800 EIS, berkuat kuasa Oktober 2024, siling RM6,000. Kategori kedua, pekerja tidak layak EIS dan pengecualian lain tidak disokong. Sahkan kelayakan sebelum guna untuk payroll. <a href="https://www.perkeso.gov.my/en/contribution-rate/" target="_blank" rel="noopener noreferrer">PERKESO rasmi</a>.')],
 ['tax','Cukai Pendapatan Individu',field('Pendapatan kasar tahunan (RM)','t_income',60000)+field('Jumlah pelepasan layak tahunan (RM)','t_relief',9000)+button('tax')+result('t_res')+note('Anggaran cukai pemastautin berdasarkan jadual Tahun Taksiran 2025. Pelepasan perlu dimasukkan sendiri; tidak mengambil kira rebat, PCB, pendapatan khas atau perubahan peraturan 2026. Bukan e-Filing rasmi. <a href="https://www.hasil.gov.my/en/individu/kadar-cukai/" target="_blank" rel="noopener noreferrer">LHDN rasmi</a>.')],
 ['savings','Matlamat Simpanan',field('Simpanan permulaan (RM)','v_start',1000)+field('Simpanan tambahan bulanan (RM)','v_month',300)+field('Tempoh (tahun)','v_years',5,'1')+field('Anggaran pulangan setahun (%)','v_rate',3,'0.1')+button('savings')+result('v_res')+note('Simulasi faedah kompaun bulanan dan sumbangan pada hujung bulan. Pulangan bukan jaminan; tidak mengambil kira inflasi, cukai atau yuran.')]];
 const host=document.querySelector('.workspace-content');
@@ -56,7 +60,7 @@ const calc={
  },
  socso(){
   const c=math.approxContributions(number('p_pay'));
-  output('p_res','<strong>Jadual PERKESO: Akta 4 Kategori Pertama + EIS Akta 800</strong><br>SOCSO pekerja: <b>'+money(c.socso)+'</b><br>SOCSO majikan: '+money(c.employerSocso)+'<br>EIS pekerja: '+money(c.eis)+'<br>EIS majikan: '+money(c.employerEis)+'<br>Jumlah potongan pekerja: '+money(c.socso+c.eis)+'<br><small>Sahkan kategori pekerja dan kelayakan EIS; untuk payroll/remitan, semak <a href="https://perkeso.gov.my/en/our-services/employer-employee/contribution-calculator.html" target="_blank" rel="noopener noreferrer">kalkulator rasmi PERKESO</a>.</small>');
+  output('p_res','<strong>Jadual PERKESO: Akta 4 Kategori Pertama + EIS Akta 800</strong><br>SOCSO pekerja: <b>'+money(c.socso)+'</b><br>SOCSO majikan: '+money(c.employerSocso)+'<br>EIS pekerja: '+money(c.eis)+'<br>EIS majikan: '+money(c.employerEis)+'<br>Jumlah potongan pekerja: '+money(c.socso+c.eis)+'<br><small>Sahkan kategori pekerja dan kelayakan EIS; untuk payroll/remitan, semak <a href="https://www.perkeso.gov.my/en/our-services/employer-employee/contribution-calculator.html" target="_blank" rel="noopener noreferrer">kalkulator rasmi PERKESO</a>.</small>');
  },
  tax(){
   const r=math.taxYA2025(number('t_income'),number('t_relief'));
@@ -73,18 +77,16 @@ Object.keys(calc).forEach(k=>{
  $('btn_'+k).addEventListener('click',()=>runCalc(k));
  const panel=$(k);
  const fields=panel.querySelectorAll('input,select');
- let initialized=false;
- fields.forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{
-   if(initialized||Array.from(fields).some(f=>f.value.trim()===''))return;
-   initialized=true;runCalc(k);initialized=false;
- }));
+ fields.forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>runCalc(k)));
  const copy=document.createElement('button');copy.type='button';copy.className='v2-copy';copy.textContent='Salin keputusan';
  copy.addEventListener('click',async()=>{
   const data=$(resultIds[k]).innerText.trim();
-  if(!data||data.startsWith('Masukkan nilai'))return;
+  if($(resultIds[k]).dataset.resultReady!=='true'){copy.textContent='Kira dahulu';return;}
   try{await navigator.clipboard.writeText('Kira Cepat — '+panel.querySelector('h2').textContent+'\n'+data);copy.textContent='Disalin ✓';}
   catch(e){copy.textContent='Tidak dapat salin — cuba pelayar HTTPS';}
  });
+ panel.addEventListener('input',()=>{copy.textContent='Salin keputusan';});
+ panel.addEventListener('change',()=>{copy.textContent='Salin keputusan';});
  $(resultIds[k]).insertAdjacentElement('afterend',copy);
  runCalc(k);
 });

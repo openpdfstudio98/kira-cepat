@@ -86,3 +86,20 @@ test('9 savings: no interest, end-of-month contributions',()=>{
  assert.ok(M.savings(1000,100,1,3).balance>2200);
  assert.throws(()=>M.savings(0,0,101,3));
 });
+
+test('Gaji bersih mengecualikan OT untuk KWSP dan memasukkannya untuk SOCSO/EIS',()=>{
+ const salary=M.salary(3500,200,500,0);
+ assert.equal(salary.gross,4200);
+ assert.equal(salary.epf,407);
+ assert.equal(salary.socso,20.75);
+ assert.equal(salary.eis,8.30);
+ close(salary.net,3763.95);
+});
+
+test('KWSP gaji melebihi RM20,000 membundarkan jumlah sebelum paparan sen',()=>{
+ const result=M.epfPartA(20000.01);
+ assert.equal(result.employee,2200);
+ assert.equal(result.employer,2400);
+ assert.equal(result.total,4601);
+ assert.equal(M.epfPartA(20100).total,4623);
+});
