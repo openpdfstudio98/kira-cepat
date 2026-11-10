@@ -103,3 +103,10 @@ test('KWSP gaji melebihi RM20,000 membundarkan jumlah sebelum paparan sen',()=>{
  assert.equal(result.total,4601);
  assert.equal(M.epfPartA(20100).total,4623);
 });
+
+test('Penukaran rentas mata wang menggunakan kadar MYR dan mengecualikan ILS',()=>{
+ const rates={MYR:1,IDR:4000,THB:8,ILS:1};
+ close(M.convert('cur',8000,'IDR','THB',rates),16);
+ assert.throws(()=>M.convert('cur',1,'MYR','ILS',rates),/tidak disokong/);
+ assert.throws(()=>M.convert('cur',1,'ILS','ILS'),/tidak disokong/);
+});
