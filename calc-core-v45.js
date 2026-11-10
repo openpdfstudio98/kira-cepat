@@ -47,24 +47,50 @@
   if(!map||!Object.hasOwn(map,from)||!Object.hasOwn(map,to))throw Error('Unit tidak sah.');
   return v*map[from]/map[to];
  }
+ // Part A, effective October 2025. RM0.01–RM20,000 wage-band rules;
+ // RM20,000.01+ has independently rounded total as required by KWSP.
  function epfPartA(wage){
   const w=nonnegative(wage,'Gaji KWSP');
-  if(w===0)return {employee:0,employer:0,method:'schedule approximation'};
-  if(w<=10)return {employee:0,employer:0,method:'low-wage estimate; verify schedule'};
+  if(w===0)return {employee:0,employer:0,total:0,method:'Part A'};
+  if(w<=10)return {employee:0,employer:0,total:0,method:'Part A'};
   if(w>20000){
    const employee=Math.round(w*.11*100)/100;
-   const total=Math.ceil(w*(.11+.12)-1e-9);
-   return {employee,employer:Math.round((total-employee)*100)/100,method:'statutory rate with total rounding'};
+   const employer=Math.round(w*.12*100)/100;
+   return {employee,employer,total:Math.ceil((employee+employer)-1e-9),method:'Part A > RM20,000 (total rounded)'};
   }
   const upper=w<=5000?Math.ceil((w-1e-9)/20)*20:Math.ceil((w-5000-1e-9)/100)*100+5000;
-  return {employee:Math.ceil(upper*.11-1e-9),employer:Math.ceil(upper*(w<=5000?.13:.12)-1e-9),method:'approximate Part A band'};
+  const employee=Math.ceil(upper*.11-1e-9),employer=Math.ceil(upper*(w<=5000?.13:.12)-1e-9);
+  return {employee,employer,total:employee+employer,method:'Part A wage band Oct 2025'};
+ }
+ // PERKESO Act 4 first category and Act 800: official published wage ranges
+ // effective Oct 2024. Only applicable to eligible first-category workers.
+ const lowWageCeil=[30,50,70,100,140,200,300,400,500,600,700,800,900,1000];
+ const lowAct4Employer=[.40,.70,1.10,1.50,2.10,2.95,4.35,6.15,7.85,9.65,11.35,13.15,14.85,16.65];
+ const lowAct4Employee=[.10,.20,.30,.40,.60,.85,1.25,1.75,2.25,2.75,3.25,3.75,4.25,4.75];
+ const lowEis=[.05,.10,.15,.20,.25,.35,.50,.70,.90,1.10,1.30,1.50,1.70,1.90];
+ function perkesoFirstCategory(wage){
+  const w=nonnegative(wage,'Gaji PERKESO');
+  if(w===0)return {socso:0,employerSocso:0,eis:0,employerEis:0,source:'Act 4/800',estimated:false};
+  const capped=Math.min(w,6000);
+  let socso,employerSocso,eis;
+  if(capped<=1000){
+   const i=lowWageCeil.findIndex(limit=>capped<=limit);
+   socso=lowAct4Employee[i];employerSocso=lowAct4Employer[i];eis=lowEis[i];
+  }else{
+   // 1000.01–1100 = index 1, ... 5900.01–6000 = index 50.
+   const band=Math.ceil((capped-1000-1e-9)/100);
+   socso=Math.round((4.75+band*.50)*100)/100;
+   // Act 4 employer wage bands alternate +RM1.70 / +RM1.80.
+   employerSocso=Math.round((16.65+Math.ceil(band/2)*1.70+Math.floor(band/2)*1.80)*100)/100;
+   eis=Math.round((1.90+band*.20)*100)/100;
+  }
+  return {socso,employerSocso,eis,employerEis:eis,source:'PERKESO Act 4 first category / Act 800 (Oct 2024)',estimated:false};
  }
  function approxContributions(wage){
-  const w=nonnegative(wage,'Gaji'), epf=epfPartA(w), capped=Math.min(w,6000);
-  const round2=n=>Math.round(n*100)/100;
-  return {epf:epf.employee,employerEPF:epf.employer,epfMethod:epf.method,
-   socso:round2(capped*.005),eis:round2(capped*.002),employerSocso:round2(capped*.0175),
-   estimated:true};
+  const w=nonnegative(wage,'Gaji'),epf=epfPartA(w),p=perkesoFirstCategory(w);
+  return {epf:epf.employee,employerEPF:epf.employer,epfTotal:epf.total,epfMethod:epf.method,
+   socso:p.socso,eis:p.eis,employerSocso:p.employerSocso,employerEis:p.employerEis,
+   estimated:false,source:p.source};
  }
  function salary(base,allowance,ot,other){
   const gross=nonnegative(base,'Gaji asas')+nonnegative(allowance,'Elaun')+nonnegative(ot,'Bayaran OT');
@@ -98,5 +124,5 @@
   if(!Number.isFinite(balance))throw Error('Nilai simpanan terlalu besar.');
   return {principal,returnAmount:balance-principal,balance};
  }
- return {loan,zakat,convert,epfPartA,approxContributions,salary,overtime,taxYA2025,savings};
+ return {loan,zakat,convert,epfPartA,perkesoFirstCategory,approxContributions,salary,overtime,taxYA2025,savings};
 });
