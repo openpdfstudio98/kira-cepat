@@ -2,47 +2,38 @@
 (function () {
   'use strict';
   const names = {
-    loan:'Pinjaman',zakat:'Zakat',conv:'Converter',
+    loan:'Pinjaman',zakat:'Zakat',conv:'Penukar Unit',currency:'Penukar Mata Wang',
     salary:'Gaji Bersih',ot:'Overtime',epf:'KWSP / EPF',
     socso:'SOCSO & EIS',tax:'Cukai Pendapatan',savings:'Simpanan'
   };
   const ids=Object.keys(names);
-  const resultIds={loan:'l_res',zakat:'z_res',conv:'c_res',salary:'s_res',ot:'o_res',epf:'e_res',socso:'p_res',tax:'t_res',savings:'v_res'};
-  const tabs=Array.from(document.querySelectorAll('.tabs .tab'));
-  const heading=document.querySelector('.workspace-heading');
-  const reduceMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const scrollBehavior=reduceMotion?'instant':'smooth';
-  function hashId(){
-    try{return decodeURIComponent(window.location.hash.slice(1));}
-    catch{return '';}
-  }
-  const getTabId=tab=>tab.dataset.target||({0:'loan',1:'zakat',2:'conv'})[tabs.indexOf(tab)];
-  function select(id){
-    const tab=tabs.find(t=>getTabId(t)===id);
-    if(!tab)return;
-    tab.click();
-  }
-  // Preserve legacy calculator handlers, add deep links and keep mobile navigation visible.
-  tabs.forEach(tab=>{
-    const id=getTabId(tab);
-    if(!id)return;
-    tab.setAttribute('aria-label','Buka kalkulator '+names[id]);
-    tab.setAttribute('aria-controls',id);
-    tab.addEventListener('click',event=>{
-      tabs.forEach(t=>t.setAttribute('aria-current',t===tab?'true':'false'));
-      if(event.isTrusted && window.location.hash!=='#'+id)history.replaceState(null,'','#'+id);
-      if(event.isTrusted && window.matchMedia('(max-width:690px)').matches && heading){
-        heading.scrollIntoView({behavior:scrollBehavior,block:'start'});
-      }
-    });
+  const resultIds={loan:'l_res',zakat:'z_res',conv:'c_res',currency:'fx_res',salary:'s_res',ot:'o_res',epf:'e_res',socso:'p_res',tax:'t_res',savings:'v_res'};
+  const menu=document.querySelector('.tools-menu');
+  const trigger=menu?.querySelector('summary');
+  document.addEventListener('click',event=>{
+    if(menu?.open&&!menu.contains(event.target))menu.open=false;
   });
+  menu?.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&menu.open){
+      menu.open=false;
+      trigger.focus();
+    }
+  });
+  const workspace=document.querySelector('.workspace');
+  if(!workspace)return;
   function selectFromUrl(){
-    const id=hashId();
-    select(ids.includes(id)?id:document.body.dataset.defaultCalculator||'loan');
+    let hash;
+    try{hash=decodeURIComponent(window.location.hash.slice(1));}catch{}
+    const selected=ids.includes(hash)?hash:document.body.dataset.defaultCalculator||'loan';
+    for(const id of ids)document.getElementById(id).classList.toggle('hidden',id!==selected);
+    for(const link of menu.querySelectorAll('[data-tool]')){
+      if(link.dataset.tool===selected)link.setAttribute('aria-current','page');
+      else link.removeAttribute('aria-current');
+    }
   }
   selectFromUrl();
   window.addEventListener('hashchange',selectFromUrl);
-  // Standard accessible result utilities for all nine calculator cards.
+  // Result actions are shared across the calculators and converters.
   ids.forEach(id=>{
     const card=document.getElementById(id);
     const result=document.getElementById(resultIds[id]);

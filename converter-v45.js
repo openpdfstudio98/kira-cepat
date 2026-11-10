@@ -11,43 +11,62 @@ MKD MMK MNT MOP MRU MUR MVR MWK MXN MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK 
 PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SLL SOS SRD SSP STN SYP SZL THB TJS
 TMT TND TOP TRY TTD TVD TWD TZS UAH UGX UYU UZS VES VND VUV WST XAF XCD XCG XDR XOF XPF YER
 ZAR ZMW ZWG ZWL`.split(/\s+/);
- const units={
-  len:['m','km','cm','mm','inch','ft'],
-  wgt:['kg','g','lb','oz'],
-  tmp:['C','F','K'],
-  cur:currencies
- };
+ const units={len:['m','km','cm','mm','inch','ft'],wgt:['kg','g','lb','oz'],tmp:['C','F','K']};
  const endpoint='https://open.er-api.com/v6/latest/MYR';
- let cache=null, updatedAt=0,loading=null;
- const result=document.getElementById('c_res');
- const typeControl=document.getElementById('c_type');
- const fromControl=document.getElementById('c_from');
- const toControl=document.getElementById('c_to');
- const credit=document.getElementById('c_credit');
- const currencyNames=typeof Intl.DisplayNames==='function'?new Intl.DisplayNames('ms',{type:'currency',fallback:'none'}):null;
- function updateOptions(){
-  const type=typeControl.value;
-  for(const select of [fromControl,toControl]){
-   select.replaceChildren(...units[type].map(code=>{
-    const name=type==='cur'?currencyNames?.of(code):null;
-    const option=new Option(name?`${code} — ${name}`:code,code);
-    if(type==='cur')option.dataset.currency=code;
-    return option;
-   }));
-  }
-  toControl.selectedIndex=1;
-  credit.hidden=type!=='cur';
+ const byId=id=>document.getElementById(id);
+ const unitCard=byId('conv');
+ unitCard.insertAdjacentHTML('afterend',`<section id="currency" class="card hidden">
+  <h2>Penukar Mata Wang</h2>
+  <div class="row">
+    <div><label for="fx_from">Dari</label><select id="fx_from"></select></div>
+    <div><label for="fx_to">Ke</label><select id="fx_to"></select></div>
+  </div>
+  <label for="fx_val">Nilai</label><input id="fx_val" type="number" min="0" step="any" value="1">
+  <button type="button" class="calc" id="btn_currency">Tukar</button>
+  <div class="result" id="fx_res">Isi nilai dan tekan Tukar.</div>
+  <p class="v2-note"><a href="https://www.exchangerate-api.com">Rates By Exchange Rate API</a> · Kadar rujukan harian.</p>
+ </section>`);
+ function writeResult(result,value,from,to,converted){
+  const amount=document.createElement('b');
+  amount.textContent=converted.toFixed(4)+' '+to;
+  result.replaceChildren(value+' '+from+' = ',amount);
+  result.dataset.resultReady='true';
  }
- typeControl.addEventListener('change',updateOptions);
- updateOptions();
- let requestId=0;
- function invalidate(){
-  requestId++;
+ function clearResult(result){
   result.dataset.resultReady='false';
   result.textContent='Isi nilai dan tekan Tukar.';
  }
- document.getElementById('conv').addEventListener('input',invalidate);
- document.getElementById('conv').addEventListener('change',invalidate);
+ const unitType=byId('c_type');
+ const unitResult=byId('c_res');
+ function updateUnits(){
+  for(const id of ['c_from','c_to'])byId(id).replaceChildren(...units[unitType.value].map(code=>new Option(code,code)));
+  byId('c_to').selectedIndex=1;
+ }
+ updateUnits();
+ unitType.addEventListener('change',updateUnits);
+ unitCard.addEventListener('input',()=>clearResult(unitResult));
+ unitCard.addEventListener('change',()=>clearResult(unitResult));
+ byId('btn_unit').addEventListener('click',()=>{
+  const value=byId('c_val').value,from=byId('c_from').value,to=byId('c_to').value;
+  unitResult.dataset.resultReady='false';
+  try{writeResult(unitResult,value,from,to,math.convert(unitType.value,value,from,to));}
+  catch(e){unitResult.textContent=e.message;}
+ });
+ const currencyNames=typeof Intl.DisplayNames==='function'?new Intl.DisplayNames('ms',{type:'currency',fallback:'none'}):null;
+ for(const id of ['fx_from','fx_to']){
+  byId(id).replaceChildren(...currencies.map(code=>{
+   const name=currencyNames?.of(code);
+   const option=new Option(name?`${code} — ${name}`:code,code);
+   option.dataset.currency=code;
+   return option;
+  }));
+ }
+ byId('fx_to').value='USD';
+ const result=byId('fx_res');
+ let cache=null,updatedAt=0,loading=null,requestId=0;
+ function invalidate(){requestId++;clearResult(result);}
+ byId('currency').addEventListener('input',invalidate);
+ byId('currency').addEventListener('change',invalidate);
  async function latest(){
   const now=Date.now();
   if(cache&&now-updatedAt<60*60*1000&&now-cache.timestamp<=48*60*60*1000)return cache;
@@ -72,42 +91,30 @@ ZAR ZMW ZWG ZWL`.split(/\s+/);
   })();
   return loading;
  }
- window.calcConv=async function(){
+ byId('btn_currency').addEventListener('click',async()=>{
   const id=++requestId;
   result.dataset.resultReady='false';
-  const type=typeControl.value;
-  const input=document.getElementById('c_val');
-  const from=fromControl.value,to=toControl.value;
-  const v=input.value;
-  if(v.trim()===''){result.textContent='Sila masukkan nilai.';return;}
-  if(type==='cur'&&Number(v)<0){result.textContent='Nilai perlu bukan negatif untuk penukaran ini.';return;}
-  if(type==='cur'&&from!==to){
-   result.textContent='Mendapatkan kadar rujukan terkini...';
-   try{
-    const {rates,timestamp}=await latest();
-    if(id!==requestId)return;
-    if(!rates[from]||!rates[to]){result.textContent='Kadar rujukan untuk pasangan mata wang ini belum tersedia.';return;}
-    const out=math.convert(type,v,from,to,rates);
-    result.dataset.resultReady='true';
-    result.textContent='';
-    const label=document.createElement('b');label.textContent=out.toFixed(4)+' '+to;
-    const date=document.createElement('time');
-    date.dataset.rateDate='';
-    date.dateTime=new Date(timestamp).toISOString();
-    date.textContent=new Intl.DateTimeFormat('ms-MY',{dateStyle:'medium',timeZone:'Asia/Kuala_Lumpur'}).format(timestamp);
-    result.append(v+' '+from+' = ',label,document.createElement('br'),'Tarikh kadar: ',date,' (kadar rujukan; bukan kadar bank).');
-   }catch(e){
-    if(id!==requestId)return;
-    result.textContent='Kadar rujukan terkini tidak tersedia. Cuba semula sebentar lagi.';
-   }
+  const value=byId('fx_val').value,from=byId('fx_from').value,to=byId('fx_to').value;
+  if(value.trim()===''){result.textContent='Sila masukkan nilai.';return;}
+  if(Number(value)<0){result.textContent='Nilai perlu bukan negatif untuk penukaran ini.';return;}
+  if(from===to){
+   writeResult(result,value,from,to,math.convert('cur',value,from,to));
    return;
   }
+  result.textContent='Mendapatkan kadar rujukan terkini...';
   try{
-   const out=math.convert(type,v,from,to);
-   result.dataset.resultReady='true';
-   result.textContent='';
-   const label=document.createElement('b');label.textContent=out.toFixed(4)+' '+to;
-   result.append(document.createTextNode(v+' '+from+' = '),label);
-  }catch(e){result.textContent=e.message;}
- };
+   const {rates,timestamp}=await latest();
+   if(id!==requestId)return;
+   if(!rates[from]||!rates[to]){result.textContent='Kadar rujukan untuk pasangan mata wang ini belum tersedia.';return;}
+   writeResult(result,value,from,to,math.convert('cur',value,from,to,rates));
+   const date=document.createElement('time');
+   date.dataset.rateDate='';
+   date.dateTime=new Date(timestamp).toISOString();
+   date.textContent=new Intl.DateTimeFormat('ms-MY',{dateStyle:'medium',timeZone:'Asia/Kuala_Lumpur'}).format(timestamp);
+   result.append(document.createElement('br'),'Tarikh kadar: ',date,' (kadar rujukan; bukan kadar bank).');
+  }catch(e){
+   if(id!==requestId)return;
+   result.textContent='Kadar rujukan terkini tidak tersedia. Cuba semula sebentar lagi.';
+  }
+ });
 })();
