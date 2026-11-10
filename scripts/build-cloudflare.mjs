@@ -12,7 +12,8 @@ if(!raw)throw Error('Set SITE_URL=https://your-confirmed-project.pages.dev in Cl
 let url;try{url=new URL(raw)}catch{throw Error('SITE_URL must be a valid HTTPS URL.');}
 if(url.protocol!=='https:'||url.pathname!=='/'||url.search||url.hash||url.username||url.password)throw Error('SITE_URL must be an HTTPS origin without path, query or hash.');
 const base=url.origin+'/';
-const preview=Boolean(process.env.CF_PAGES_BRANCH&&process.env.CF_PAGES_BRANCH!=='master');
+const deployedBranch=process.env.WORKERS_CI_BRANCH||process.env.CF_PAGES_BRANCH||'';
+const preview=Boolean(deployedBranch&&deployedBranch!=='master');
 const slugs=['kalkulator-pinjaman','kalkulator-zakat-pendapatan','converter-unit-mata-wang','kalkulator-gaji-bersih','kalkulator-overtime','kalkulator-kwsp-epf','kalkulator-socso-eis','kalkulator-cukai-pendapatan','kalkulator-simpanan'];
 const assets=['index.html','favicon.png','premium-v3.css','premium-v3-1.css','premium-v3-1.js','ultimate-v2.js','seo-v4.css'];
 for(const name of assets)if(!existsSync(join(root,name)))throw Error('Missing asset: '+name);
@@ -34,5 +35,6 @@ for(const file of pages(dist)){
 const urls=['',...slugs.map(s=>s+'/')].map(path=>base+path);
 writeFileSync(join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+urls.map(u=>'  <url><loc>'+u+'</loc></url>').join('\n')+'\n</urlset>\n');
 writeFileSync(join(dist,'robots.txt'),'User-agent: *\n'+(preview?'Disallow: /':'Allow: /')+'\nSitemap: '+base+'sitemap.xml\n');
+writeFileSync(join(dist,'404.html'), '<!doctype html><html lang="ms"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Halaman tidak ditemui | Kira Cepat</title><body style="font:16px system-ui;background:#08090b;color:white;padding:3rem;text-align:center"><h1>Halaman tidak ditemui</h1><p>Sila kembali ke halaman utama.</p><a style="color:#aea0ff" href="/">Kira Cepat</a></body></html>');
 writeFileSync(join(dist,'_headers'),'/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n');
 console.log('Cloudflare build OK:',{origin:base,preview,htmlPages:pages(dist).length,sitemapUrls:urls.length});
