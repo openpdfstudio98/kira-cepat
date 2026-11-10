@@ -51,3 +51,13 @@ GitHub Actions checks these commands on every PR with a dummy test URL. This **d
 This PR does **not** connect to the user's private Cloudflare account or create a Pages project; an authorized account owner must complete the dashboard integration. No Cloudflare credentials should ever be committed to GitHub.
 
 No calculator calculation or UI functionality has been changed.
+
+## Existing Cloudflare Worker: `kiracepat`
+
+The Cloudflare account currently has **a Worker with Static Assets**, not a Pages project. Its account-wide `workers.dev` subdomain was `asriblok15` at the time of checking. The preferred account subdomain is `kiraonline`, **but this is not yet confirmed or applied**.
+
+- Cloudflare officially documents changing an existing account subdomain using **Workers & Pages → Your subdomain → Change** in the dashboard. API `PUT /accounts/{account_id}/workers/subdomain` returned HTTP 409 because the account already has a subdomain. Do **not** delete the existing subdomain automatically; this can break the current Worker URL.
+- After the dashboard confirms the change, the expected Worker URL is `https://kiracepat.kiraonline.workers.dev/`. Verify the hostname and website first; do not assume it is already live.
+- In the build settings, use that **verified** URL as `SITE_URL` when running `node scripts/build-cloudflare.mjs`. The resulting canonical tags, breadcrumb URLs, robots and sitemap will then use the same host.
+- This existing Worker uses a **Workers deploy** workflow (`npx wrangler deploy` was shown). The Pages-specific `dist` build guide above does not by itself configure Workers Static Assets. Before deploying, adapt Workers static assets to serve `dist` and run the build step; do not merge a Pages-only deployment configuration without this change.
+- Once the working site uses the new URL, verify each of the nine pages, `/sitemap.xml`, `/robots.txt`, and all canonical tags. Submit the new sitemap in Google Search Console. The previous GitHub Pages URL may remain a duplicate until retired or redirected.
