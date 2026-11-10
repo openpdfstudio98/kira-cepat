@@ -28,7 +28,7 @@ test('3 converter: signed temperatures, absolute zero, units, currency rates',()
 test('4 salary: deductions and impossible negative net are guarded',()=>{
  const s=M.salary(3500,200,0,0);
  close(s.gross,3700);assert.ok(s.net<3700&&s.net>0);
- assert.equal(s.estimated,true);
+ assert.equal(s.estimated,false);
  assert.throws(()=>M.salary(1000,0,0,10000),/Potongan/);
 });
 test('5 overtime: multiplier and zero workdays guard',()=>{
@@ -43,10 +43,33 @@ test('6 EPF: official RM3250 sample and 5000 threshold',()=>{
  assert.equal(a.employer,650);assert.ok(b.employer<650);
  assert.equal(M.epfPartA(0).employee,0);
 });
-test('7 SOCSO/EIS: explicitly approximate, capped at RM6000',()=>{
- const a=M.approxContributions(6000),b=M.approxContributions(10000);
- assert.equal(a.estimated,true);close(a.socso,b.socso);close(a.eis,b.eis);
- close(a.socso,30);close(a.eis,12);
+test('7 PERKESO official Act 4 / Act 800 first-category wage bands',()=>{
+ const a=M.perkesoFirstCategory(3500),b=M.perkesoFirstCategory(3500.01);
+ close(a.socso,17.25);close(a.employerSocso,60.35);close(a.eis,6.90);
+ close(b.socso,17.75);close(b.employerSocso,62.15);close(b.eis,7.10);
+ const low=M.perkesoFirstCategory(20);
+ close(low.socso,.10);close(low.employerSocso,.40);close(low.eis,.05);
+ const cap=M.perkesoFirstCategory(6000);
+ close(cap.socso,29.75);close(cap.employerSocso,104.15);close(cap.eis,11.90);
+ assert.deepEqual(M.perkesoFirstCategory(8000),cap);
+ assert.equal(a.estimated,false);
+ assert.throws(()=>M.perkesoFirstCategory(-1));
+ for(const boundary of [30,50,70,100,140,200,300,400,500,1000,1100,3500,5000,6000]){
+  const left=M.perkesoFirstCategory(boundary);
+  const right=M.perkesoFirstCategory(boundary+.01);
+  assert.ok(right.socso>=left.socso);
+  assert.ok(right.eis>=left.eis);
+ }
+});
+test('7b KWSP Part A published official examples and boundaries',()=>{
+ const x=M.epfPartA(6710.80);
+ close(x.employee,748);close(x.employer,816);close(x.total,1564);
+ const high=M.epfPartA(21250);
+ close(high.employee,2337.5);close(high.employer,2550);close(high.total,4888);
+ const tiny=M.epfPartA(20);
+ close(tiny.employee,3);close(tiny.employer,3);
+ const next=M.epfPartA(20.01);
+ close(next.employee,5);close(next.employer,6);
 });
 test('8 income tax YA2025: published LHDN bracket boundaries',()=>{
  close(M.taxYA2025(20000,0).tax,150);
