@@ -91,7 +91,7 @@
   "Kelebihan": "Features",
   "Kembali ke kalkulator": "Back to the calculators",
   "Kereta.": "Car loans.",
-  "Kira Cepat menghimpunkan alat pengiraan harian dalam Bahasa Melayu dan Inggeris. Buka menu Alat untuk memilih kalkulator dan melihat panduan penggunaannya. Sesetengah kalkulator berkaitan kewangan hanya memberi anggaran dan perlu disemak dengan agensi rasmi.": "Kira Cepat brings together everyday calculators in Malay and English. Use the Tools menu to choose a calculator and see its guide. Verify financial estimates with the relevant authority when needed.",
+  "Kira Cepat menghimpunkan alat pengiraan harian dalam Bahasa Melayu dan Inggeris. Pilih alat di bahagian Semua alat untuk melihat kalkulator dan panduan penggunaannya. Sesetengah kalkulator berkaitan kewangan hanya memberi anggaran dan perlu disemak dengan agensi rasmi.": "Kira Cepat brings together everyday calculators in Malay and English. Choose a calculator in All tools to open it and see its guide. Verify financial estimates with the relevant authority when needed.",
   "Kira Cepat menyediakan kalkulator percuma dalam Bahasa Melayu dan Inggeris. Kalkulator boleh digunakan tanpa membuka akaun.": "Kira Cepat offers free calculators in Malay and English. You can use them without creating an account.",
   "Kira Cepat · Alat pengiraan percuma. Angka kewangan tertentu ialah anggaran dan bukan nasihat profesional.": "Kira Cepat · Free calculators. Some financial results are estimates and do not constitute professional advice.",
   "Kira Cepat – 10 Alat Percuma Malaysia | Gaji, KWSP & Zakat": "Kira Cepat – 10 Free Tools for Malaysia | Salary, EPF & Zakat",
@@ -146,7 +146,7 @@
   "Rujukan:": "References",
   "Rumah.": "Home loans.",
   "Sahkan kategori pekerja dan upah tertakluk caruman melalui portal rasmi PERKESO sebelum urusan gaji atau remitan.": "Confirm the employee’s category and contributable wages with PERKESO before preparing payroll or remitting contributions.",
-  "Sepuluh kalkulator dan penukar percuma dalam satu tempat. Kira gaji, simpanan, pinjaman dan banyak lagi dengan pengalaman premium.": "Ten free calculators and converters in one place. Estimate take-home pay, savings, loans and more.",
+  "Kira gaji, simpanan, pinjaman dan banyak lagi dengan kalkulator dan penukar percuma.": "Estimate take-home pay, savings, loans and more with free calculators and converters.",
   "Semua kalkulator percuma": "All free calculators",
   "Senarai kalkulator": "Calculator list",
   "Simulasi ansuran baki berkurangan dengan andaian kadar kekal. Semak kaedah dalam tawaran bank untuk pinjaman rumah atau kereta.": "Estimate reducing balance instalments at a constant rate. Check your bank’s offer for the method used for a home or car loan.",
@@ -175,7 +175,7 @@
   "Tukar unit panjang, berat dan suhu dengan mudah. Untuk mata wang, pilih kod yang tersedia dalam senarai dan gunakan kadar rujukan harian daripada ExchangeRate-API.": "Convert length, weight and temperature. For currency, select a supported code and use daily reference rates from ExchangeRate-API.",
   "Untuk maklum balas, gunakan": "To send feedback, visit the",
   "Utama": "Home",
-  "Ya, kesemua sepuluh alat boleh digunakan tanpa bayaran.": "Yes, all ten tools are free to use.",
+  "Ya, semua alat boleh digunakan tanpa bayaran.": "Yes, all tools are free to use.",
   "Ya. Masukkan jumlah bayaran OT bulanan. Bayaran ini dikira dalam asas SOCSO dan EIS; asas KWSP mengecualikan bayaran OT.": "Yes. Enter your monthly overtime pay. It counts towards SOCSO and EIS contributions and is excluded from the EPF calculation.",
   "dan": "and",
   "dasar privasi Cloudflare": "Cloudflare privacy policy",
@@ -183,7 +183,7 @@
   "· Kadar rujukan harian.": "· Daily reference rates."
 };
   Object.assign(english,{
-    'Alat':'Tools','Penukar Unit':'Unit Converter','Penukar Mata Wang':'Currency Converter',
+    'Semua alat':'All tools','Penukar Unit':'Unit Converter','Penukar Mata Wang':'Currency Converter',
     'Penukar Unit Percuma | Kira Cepat':'Free Unit Converter | Kira Cepat',
     'Penukar Mata Wang Percuma | Kira Cepat':'Free Currency Converter | Kira Cepat',
     'Panduan Penukar Unit':'Unit Converter Guide','Panduan Penukar Mata Wang':'Currency Converter Guide',

@@ -22,7 +22,8 @@ for(const path of paths){
  if(html.includes('openpdfstudio98.github.io/kira-cepat/'))throw Error('Old domain remains in '+path);
  if(!xml.includes('<loc>'+canonical+'</loc>'))throw Error('Sitemap missing '+canonical);
  if(html.includes('USD:4.7')||html.includes('EUR:5.1'))throw Error('Stale currency fallback remains in '+path);
- if((html.match(/class="tools-trigger"/g)||[]).length!==1||(html.match(/data-tool="/g)||[]).length!==10)throw Error('Expected one menu with ten tools: '+path);
+ if((html.match(/class="tools-picker"/g)||[]).length!==1||(html.match(/data-tool="/g)||[]).length!==10)throw Error('Expected one visible tool picker: '+path);
+ if(html.includes('class="hero-stats"')||html.includes('class="tools-menu"'))throw Error('Outdated tool navigation on '+path);
  const prefix=path?'../':'';
  for(const asset of ['premium-v3.css','premium-v3-1.css','seo-v4.css','ultimate-v2.js','premium-v3-1.js','calc-core-v45.js','legacy-v45.js','converter-v45.js','language.js','favicon.png']){
   if(!existsSync(join(dir,asset)))throw Error('Shared asset not in output: '+asset);
