@@ -21,13 +21,18 @@ const sections=[
 ['socso','SOCSO & EIS',field('Gaji bulanan (RM)','p_pay',3500)+button('socso')+result('p_res')+note('ANGGARAN KASAR — BUKAN jadual caruman rasmi. SOCSO pekerja 0.5%, majikan 1.75%; EIS pekerja/majikan 0.2%, dengan had gaji RM6,000. Angka ini tidak sesuai untuk slip gaji atau remitan. Sila gunakan kalkulator rasmi PERKESO untuk kadar tepat. <a href="https://perkeso.gov.my/en/our-services/employer-employee/contributions" target="_blank" rel="noopener noreferrer">PERKESO rasmi</a>.')],
 ['tax','Cukai Pendapatan Individu',field('Pendapatan kasar tahunan (RM)','t_income',60000)+field('Jumlah pelepasan layak tahunan (RM)','t_relief',9000)+button('tax')+result('t_res')+note('Anggaran cukai pemastautin berdasarkan jadual Tahun Taksiran 2025. Pelepasan perlu dimasukkan sendiri; tidak mengambil kira rebat, PCB, pendapatan khas atau perubahan peraturan 2026. Bukan e-Filing rasmi. <a href="https://www.hasil.gov.my/en/individu/kadar-cukai/" target="_blank" rel="noopener noreferrer">LHDN rasmi</a>.')],
 ['savings','Matlamat Simpanan',field('Simpanan permulaan (RM)','v_start',1000)+field('Simpanan tambahan bulanan (RM)','v_month',300)+field('Tempoh (tahun)','v_years',5,'1')+field('Anggaran pulangan setahun (%)','v_rate',3,'0.1')+button('savings')+result('v_res')+note('Simulasi faedah kompaun bulanan dan sumbangan pada hujung bulan. Pulangan bukan jaminan; tidak mengambil kira inflasi, cukai atau yuran.')]];
-const host=document.querySelector('.wrap');
+const host=document.querySelector('.workspace-content');
 const tabs=document.querySelector('.tabs');
 sections.forEach(([id,title,body])=>{
   const tab=document.createElement('button');tab.type='button';tab.className='tab';tab.textContent=title==='Kalkulator Overtime'?'OT':title==='Kalkulator KWSP / EPF'?'EPF':({salary:'Gaji',epf:'EPF',socso:'SOCSO',tax:'Cukai',savings:'Simpanan'})[id]||title;
-  tab.dataset.target=id;tab.addEventListener('click',()=>showV2(id));tabs.appendChild(tab);
+  tab.dataset.target=id;
+  const number=String(4+sections.findIndex(section=>section[0]===id)).padStart(2,'0');
+  const label=tab.textContent;
+  const symbol=document.createElement('span');symbol.className='tab-icon';symbol.setAttribute('aria-hidden','true');symbol.textContent=number;
+  tab.textContent='';tab.appendChild(symbol);tab.appendChild(document.createTextNode(label));
+  tab.addEventListener('click',()=>showV2(id));tabs.appendChild(tab);
   const card=document.createElement('section');card.id=id;card.className='card hidden';card.innerHTML='<h2>'+title+'</h2>'+body;
-  host.insertBefore(card,document.querySelector('footer'));
+  host.appendChild(card);
 });
 const oldShow=window.show;
 window.show=function(t){oldShow(t);sections.forEach(([id])=>$(id).classList.add('hidden'));document.querySelectorAll('.tab[data-target]').forEach(x=>x.classList.remove('active'));};
