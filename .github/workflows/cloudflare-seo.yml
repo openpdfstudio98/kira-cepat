@@ -1,0 +1,21 @@
+name: Validate Cloudflare Pages SEO build
+on:
+  pull_request:
+  push:
+    branches: [master]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build static site with test Cloudflare origin
+        env:
+          SITE_URL: https://kira-cepat-ci-example.pages.dev
+        run: node scripts/build-cloudflare.mjs
+      - name: Verify ten pages and SEO metadata
+        env:
+          SITE_URL: https://kira-cepat-ci-example.pages.dev
+        run: node scripts/verify-cloudflare.mjs
