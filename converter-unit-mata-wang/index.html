@@ -140,7 +140,7 @@ const units = {
   len: {m:1, km:1000, cm:0.01, mm:0.001, inch:0.0254, ft:0.3048},
   wgt: {kg:1, g:0.001, lb:0.453592, oz:0.0283495},
   tmp: {C:'c', F:'f', K:'k'},
-  cur: {MYR:1, USD:4.7, EUR:5.1, SGD:3.5, JPY:0.031, GBP:5.9}
+  cur: {MYR:1, USD:1, EUR:1, SGD:1, JPY:1, GBP:1} // option keys only; never use as rates
 };
 function show(t){
   document.getElementById('loan').classList.toggle('hidden', t!=='loan');
@@ -193,7 +193,7 @@ function calcConv(){
     if(f==='C') c=v; else if(f==='F') c=(v-32)*5/9; else c=v-273.15;
     if(to==='C') res=c; else if(to==='F') res=c*9/5+32; else res=c+273.15;
   } else if(t==='cur'){
-    res=v*units.cur[f]/units.cur[to];
+    document.getElementById('c_res').textContent='Kadar langsung belum tersedia. Muat semula halaman.';return;
   } else {
     res=v*units[t][f]/units[t][to];
   }
@@ -211,9 +211,11 @@ async function loadRates(){
     }
   } catch(e){ /* keep static fallback */ }
 }
-loadRates();
-convUpdate();
+convUpdate(); // V4.5 converter manages validated fresh rates.
 </script>
+<script src="../calc-core-v45.js" defer></script>
+<script src="../legacy-v45.js" defer></script>
+<script src="../converter-v45.js" defer></script>
 <script src="../ultimate-v2.js" defer></script>
 <script src="../premium-v3-1.js" defer></script>
 <script>window.addEventListener('DOMContentLoaded',function(){if(!location.hash){document.querySelectorAll('.tabs .tab')[2]?.click();}});</script>
