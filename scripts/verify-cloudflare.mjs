@@ -6,7 +6,7 @@ const paths=['', 'kalkulator-pinjaman/','kalkulator-zakat-pendapatan/','converte
 const verification='W0jRa2Sy0OZ_iIiEbsTv875YhH2PZyrsbzebYxs9F0s';
 const homepage=readFileSync(join(dir,'index.html'),'utf8');
 const branch=process.env.WORKERS_CI_BRANCH||process.env.CF_PAGES_BRANCH||'';
-const production=!branch||branch==='master';
+const production=process.env.VERCEL_ENV!=='preview'&&(!branch||branch==='master');
 const tags=[...homepage.matchAll(/<meta name="google-site-verification" content="([^"]+)"\s*\/?\s*>/g)].map(m=>m[1]);
 if(production&&(tags.length!==1||tags[0]!==verification))throw Error('Production homepage must contain exactly one matching Google verification tag');
 if(!production&&tags.length)throw Error('Preview must not contain Google verification tag');
@@ -52,6 +52,9 @@ for(const html of [privacy,...paths.map(path=>readFileSync(join(dir,path,'index.
  const beaconCount=(html.match(/static\.cloudflareinsights\.com\/beacon\.min\.js/g)||[]).length;
  if(beaconCount!==Number(shouldHaveAnalytics))throw Error('Unexpected analytics beacon state');
  if(!production&&!html.includes('content="noindex,nofollow"'))throw Error('Preview HTML must be noindex');
- if(html.includes('pagead2.googlesyndication.com'))throw Error('Unexpected AdSense ad script');
+ const adCount=(html.match(/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/g)||[]).length;
+ const expectedAds=html!==privacy&&shouldHaveAdsTxt;
+ if(adCount!==Number(expectedAds))throw Error('Unexpected AdSense ad script count');
+ if(expectedAds&&!html.includes('client=ca-'+process.env.ADSENSE_PUBLISHER_ID.trim()))throw Error('Incorrect AdSense publisher');
 }
 console.log('PASS: 11 accessible static HTML files, canonicals, Open Graph URLs, assets, sitemap and robots configuration.');
