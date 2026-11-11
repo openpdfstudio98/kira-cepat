@@ -13,7 +13,7 @@ let url;try{url=new URL(raw)}catch{throw Error('SITE_URL must be a valid HTTPS U
 if(url.protocol!=='https:'||url.pathname!=='/'||url.search||url.hash||url.username||url.password)throw Error('SITE_URL must be an HTTPS origin without path, query or hash.');
 const base=url.origin+'/';
 const deployedBranch=process.env.WORKERS_CI_BRANCH||process.env.CF_PAGES_BRANCH||'';
-const preview=Boolean(deployedBranch&&deployedBranch!=='master');
+const preview=process.env.VERCEL_ENV==='preview'||Boolean(deployedBranch&&deployedBranch!=='master');
 const analyticsToken=preview?'':(process.env.CF_WEB_ANALYTICS_TOKEN||'').trim();
 const publisherId=preview?'':(process.env.ADSENSE_PUBLISHER_ID||'').trim();
 if(analyticsToken&&!/^[a-f0-9]{32}$/i.test(analyticsToken))throw Error('CF_WEB_ANALYTICS_TOKEN must be a Cloudflare Web Analytics site token.');
@@ -30,6 +30,11 @@ for(const file of pages(dist)){
  const path=relative(dist,file).replaceAll('\\','/');
  const canonical=base+(path==='index.html'?'':path.replace(/index\.html$/,''));
  let html=readFileSync(file,'utf8').replaceAll(old,base);
+ // Source pages also serve static hosting; control ad loading in generated builds.
+ html=html.replace(/\s*<script\s+async\s+src="https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?client=ca-pub-\d{16}"\s+crossorigin="anonymous"><\/script>/g,'');
+ if(publisherId&&(path==='index.html'||slugs.some(slug=>path===slug+'/index.html'))){
+  html=html.replace('</head>',`<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${publisherId}" crossorigin="anonymous"></script>\n</head>`);
+ }
  html=html.replace(/<link rel="canonical" href="[^"]*">/g,'<link rel="canonical" href="'+canonical+'">');
  html=html.replace(/<meta property="og:url" content="[^"]*">/g,'<meta property="og:url" content="'+canonical+'">');
  html=html.replace('</head>',[
